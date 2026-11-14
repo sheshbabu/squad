@@ -19,6 +19,14 @@
 
 
 ### Installation
+Run with Docker
+```shell
+$ docker run -d -p 8080:8080 -v ./data:/data \
+    -e OPENROUTER_API_KEY=your-key \
+    -e TZ=Asia/Singapore \
+    ghcr.io/sheshbabu/squad/squad:latest
+```
+
 Build from source
 ```shell
 $ make build
@@ -61,6 +69,13 @@ $ make test
 ### Schema Migrations
 * Create new migration file under `./migrations`
 * Use the format `<version>_<title>.sql`
+
+
+### Image Versioning
+```bash
+$ git tag x.y.z
+$ git push origin x.y.z
+```
 
 
 ### Contributions
