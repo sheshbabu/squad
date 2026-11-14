@@ -41,8 +41,10 @@ export default function ScheduleForm({ botId, schedule, onSaved, onCancel }) {
     setIsSaving(true);
 
     const payload = { name, prompt, frequency, timeOfDay, weekdays, isEnabled: schedule?.isEnabled ?? true };
-    let promise = ApiClient.createSchedule(botId, payload);
-    if (schedule !== null) {
+    let promise;
+    if (schedule === null) {
+      promise = ApiClient.createSchedule(botId, payload);
+    } else {
       promise = ApiClient.updateSchedule(botId, schedule.scheduleId, payload);
     }
 

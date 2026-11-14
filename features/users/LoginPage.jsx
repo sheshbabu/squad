@@ -18,9 +18,11 @@ export default function LoginPage({ isOnboarding = false }) {
     setEmailError("");
     setPasswordError("");
 
-    let promise = ApiClient.login({ email, password });
+    let promise;
     if (isOnboarding) {
       promise = ApiClient.createUser({ email, password });
+    } else {
+      promise = ApiClient.login({ email, password });
     }
 
     promise
