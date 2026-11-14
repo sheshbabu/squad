@@ -1,0 +1,66 @@
+.threads-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.is-empty {
+        padding: 0 var(--spacing-4);
+        color: var(--text-secondary);
+        font: var(--sm);
+    }
+
+    a.threads-list-item {
+        display: block;
+        padding: var(--spacing-4);
+        border-bottom: 1px solid var(--neutral-100);
+        text-decoration: none;
+        color: inherit;
+        transition: background-color var(--transition-normal);
+
+        &:hover,
+        &.is-active {
+            background-color: var(--bg-secondary);
+        }
+
+        .threads-list-title {
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .threads-list-subtext {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--spacing-1);
+            font: var(--sm);
+            color: var(--neutral-400);
+        }
+
+        .threads-list-status {
+            &.is-working {
+                color: var(--blue-500);
+                animation: threads-list-pulse 1.2s ease-in-out infinite;
+            }
+
+            &.is-failed {
+                color: var(--red-500);
+            }
+        }
+    }
+}
+
+@keyframes threads-list-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}

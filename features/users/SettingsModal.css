@@ -1,0 +1,10 @@
+.side-pane-modal {
+    .settings-modal-bot-icon {
+        display: flex;
+
+        svg.bot-avatar {
+            width: var(--icon-md);
+            height: var(--icon-md);
+        }
+    }
+}

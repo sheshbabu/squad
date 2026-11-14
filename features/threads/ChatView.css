@@ -1,0 +1,160 @@
+.chat-view {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+
+    &.is-loading {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chat-view-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        padding: 18px var(--spacing-6);
+
+        .chat-view-back {
+            display: none;
+        }
+
+        .chat-view-heading {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-view-title {
+            font-weight: 600;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .chat-view-privacy {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: var(--spacing-1);
+            padding: 2px var(--spacing-2);
+            border-radius: var(--radius-1);
+            color: var(--palette-text, var(--neutral-400));
+            background-color: var(--palette-bg, var(--neutral-100));
+            font: var(--sm);
+            font-weight: 500;
+            white-space: nowrap;
+            user-select: none;
+
+            /* Icons get a grey stroke globally, so the shield takes the badge color back. */
+            svg.lucide {
+                width: var(--icon-sm);
+                height: var(--icon-sm);
+
+                path {
+                    stroke: currentColor;
+                }
+            }
+        }
+
+        svg.lucide {
+            width: var(--icon-md);
+            height: var(--icon-md);
+        }
+    }
+
+    .chat-view-messages {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-view-column {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-5);
+        /* The padding sits outside the max width so the messages line up with the composer box below, which has no padding of its own. */
+        max-width: calc(var(--detail-max-width) + 2 * var(--spacing-6));
+        margin: 0 auto;
+        padding: var(--spacing-2) var(--spacing-6) var(--spacing-6);
+    }
+
+    .chat-view-load-earlier {
+        display: flex;
+        justify-content: center;
+    }
+
+    .chat-view-thinking {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        font: var(--sm);
+        color: var(--text-secondary);
+
+        .chat-view-thinking-text {
+            background: linear-gradient(90deg, var(--text-secondary) 40%, var(--text-primary) 50%, var(--text-secondary) 60%);
+            background-size: 250% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: chat-view-shimmer 3s linear infinite;
+        }
+    }
+
+    .chat-view-error {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-3);
+        padding: var(--spacing-3);
+        border-radius: var(--radius-2);
+        background-color: var(--red-100);
+
+        .chat-view-error-message {
+            font: var(--sm);
+            overflow-wrap: anywhere;
+        }
+
+        .button svg.lucide {
+            margin-left: 0;
+            margin-right: var(--spacing-1);
+        }
+    }
+}
+
+@media screen and (max-width: 948px) {
+    .chat-view {
+        .chat-view-header {
+            padding: 18px var(--spacing-4);
+        }
+
+        .chat-view-header .chat-view-back {
+            display: flex;
+            margin-left: calc(-1 * var(--spacing-2));
+        }
+
+        .chat-view-column {
+            padding: var(--spacing-2) var(--spacing-4) var(--spacing-4);
+        }
+    }
+}
+
+/* EmptyState paints its icon grey, so the bot's avatar is given back its own color here. */
+.chat-view .empty-state-icon svg.lucide.bot-avatar {
+    line,
+    circle,
+    rect,
+    path {
+        stroke: currentColor;
+    }
+}
+
+@keyframes chat-view-shimmer {
+    /* The band starts and ends fully off the text, so the loop restarts on plain text without a jump. */
+    from {
+        background-position: 150% 0;
+    }
+
+    to {
+        background-position: -50% 0;
+    }
+}

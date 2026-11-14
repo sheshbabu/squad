@@ -1,0 +1,42 @@
+.files-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.is-empty {
+        padding: 0 var(--spacing-4);
+        color: var(--text-secondary);
+        font: var(--sm);
+    }
+
+    a.files-list-item {
+        display: block;
+        padding: var(--spacing-4);
+        border-bottom: 1px solid var(--neutral-100);
+        text-decoration: none;
+        color: inherit;
+        transition: background-color var(--transition-normal);
+
+        &:hover,
+        &.is-active {
+            background-color: var(--bg-secondary);
+        }
+
+        .files-list-name {
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .files-list-subtext {
+            margin-top: var(--spacing-1);
+            font: var(--sm);
+            color: var(--neutral-400);
+        }
+    }
+}

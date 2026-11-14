@@ -1,0 +1,203 @@
+.sidebar-backdrop-container {
+    display: none;
+}
+
+.sidebar-container {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    padding: 14px 0;
+    background-color: var(--bg-secondary);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .sidebar-fixed {
+        flex-shrink: 0;
+    }
+
+    .sidebar-scrollable {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .sidebar-button {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 0 var(--spacing-2);
+        text-decoration: none;
+        color: var(--neutral-500);
+        transition: color var(--transition-normal), stroke var(--transition-normal);
+
+        &:hover,
+        &.is-active {
+            color: var(--neutral-900);
+
+            svg.lucide {
+
+                circle,
+                rect,
+                path,
+                line {
+                    stroke: var(--neutral-900);
+                }
+            }
+        }
+
+        &:active {
+            transform: scale(0.98);
+            transition: transform var(--transition-fast) ease-out;
+        }
+
+        svg.lucide {
+            padding: var(--spacing-2);
+        }
+    }
+
+    .sidebar-section {
+        margin-top: var(--spacing-6);
+
+        .sidebar-section-title {
+            padding: 0 var(--spacing-4);
+            font: var(--xs);
+            color: var(--neutral-500);
+            font-weight: 600;
+            margin-bottom: var(--spacing-1);
+        }
+
+        .sidebar-bot-row {
+            position: relative;
+
+            /* The button sits over the end of the name, and fades in so a cut-off name doesn't end abruptly. */
+            .sidebar-bot-edit {
+                display: none;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                align-items: center;
+                padding: 0 var(--spacing-2) 0 var(--spacing-4);
+                border: none;
+                background: linear-gradient(90deg, transparent, var(--bg-secondary) var(--spacing-6));
+                color: var(--neutral-500);
+                cursor: pointer;
+
+                svg.lucide {
+                    /* The smaller icon gets the extra 2px as padding, so it stays centred where the 20px bot icons would sit. */
+                    box-sizing: content-box;
+                    width: var(--icon-sm);
+                    height: var(--icon-sm);
+                    padding: calc(var(--spacing-2) + 2px);
+
+                    path {
+                        stroke: currentColor;
+                    }
+                }
+
+                &:hover {
+                    color: var(--neutral-900);
+                }
+            }
+
+            /* Touch screens can't hover, so the edit button only appears where a pointer can. */
+            @media (hover: hover) {
+                .sidebar-bot-edit {
+                    display: flex;
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity var(--transition-normal) ease;
+                }
+
+                &:hover .sidebar-bot-edit,
+                .sidebar-bot-edit:focus-visible {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            }
+        }
+
+        /* Bot links reuse the sidebar button layout, but their icons keep the bot's color on hover. */
+        .sidebar-bot-link {
+            svg.lucide.bot-avatar {
+                box-sizing: content-box;
+                width: 20px;
+                height: 20px;
+            }
+
+            &:hover svg.lucide.bot-avatar,
+            &.is-active svg.lucide.bot-avatar {
+                circle,
+                rect,
+                path,
+                line {
+                    stroke: currentColor;
+                }
+            }
+
+            .sidebar-bot-name {
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 948px) {
+    .sidebar-backdrop-container {
+        background-color: none;
+        transition: background-color var(--transition-normal) ease-in-out;
+
+        &.is-open {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* Shares the open sidebar's layer so it also covers the bottom navbar, which sits on the modal layer. */
+            z-index: var(--z-popover);
+            backdrop-filter: blur(2px);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    }
+
+    .sidebar-container {
+        display: flex;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        width: 0;
+        z-index: var(--z-popover);
+        transform: translateX(-100%);
+        transition: transform var(--transition-normal) ease-in-out, opacity var(--transition-fast) ease-in-out;
+
+        &.is-open {
+            width: 80vw;
+            transform: translateX(0);
+            opacity: 1;
+
+            .sidebar-button {
+                padding: 2px var(--spacing-2);
+
+                &.search,
+                &.settings {
+                    display: none;
+                }
+            }
+
+            .sidebar-section {
+                margin-bottom: calc(var(--mobile-navbar-height) + var(--safe-area-bottom));
+            }
+        }
+    }
+}

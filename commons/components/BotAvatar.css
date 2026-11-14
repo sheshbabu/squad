@@ -1,0 +1,12 @@
+/* The global svg.lucide rule paints strokes grey, so the avatar takes its color from the bot's palette instead. */
+svg.lucide.bot-avatar {
+    flex-shrink: 0;
+    color: var(--palette-text, var(--neutral-400));
+
+    line,
+    circle,
+    rect,
+    path {
+        stroke: currentColor;
+    }
+}

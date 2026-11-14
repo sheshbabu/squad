@@ -1,0 +1,144 @@
+.bot-form {
+    /* The delete section sits outside the form, so it gets the same divider Zen puts between sections. */
+    >.settings-section {
+        padding-top: var(--spacing-6);
+        border-top: 1px solid var(--neutral-100);
+    }
+
+    .input-container input,
+    .input-container textarea {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .input-container textarea {
+        height: auto;
+        min-height: 120px;
+        font: var(--p1);
+    }
+
+    .form-field-container:first-child {
+        margin-top: 0;
+    }
+
+    .bot-form-colors {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-3);
+    }
+
+    .bot-form-color {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition-property: transform, outline-color;
+        transition-duration: var(--transition-fast);
+        transition-timing-function: ease-out;
+
+        svg.lucide {
+            height: 12px;
+            width: 12px;
+
+            line,
+            circle,
+            rect,
+            path {
+                stroke: white;
+                stroke-width: 3;
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+        &.is-selected {
+            outline: 2px solid var(--neutral-500);
+            outline-offset: 2px;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--neutral-600);
+            outline-offset: 2px;
+        }
+
+        &.color-gray {
+            background-color: var(--neutral-400);
+        }
+
+        &.color-red {
+            background-color: var(--red-500);
+        }
+
+        &.color-orange {
+            background-color: var(--orange-500);
+        }
+
+        &.color-yellow {
+            background-color: var(--yellow-500);
+        }
+
+        &.color-green {
+            background-color: var(--green-500);
+        }
+
+        &.color-teal {
+            background-color: var(--teal-500);
+        }
+
+        &.color-blue {
+            background-color: var(--blue-500);
+        }
+
+        &.color-purple {
+            background-color: var(--purple-500);
+        }
+
+        &.color-pink {
+            background-color: var(--pink-500);
+        }
+    }
+
+    .bot-form-icons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-1);
+    }
+
+    .bot-form-icon {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: none;
+        border-radius: var(--radius-1);
+        background: none;
+        cursor: pointer;
+        transition: background-color var(--transition-fast) ease;
+
+        svg.bot-avatar {
+            width: var(--icon-md);
+            height: var(--icon-md);
+        }
+
+        &:hover {
+            background-color: var(--neutral-100);
+        }
+
+        &.is-selected {
+            background-color: var(--palette-bg, var(--neutral-100));
+            outline: 1px solid var(--palette-text, var(--neutral-400));
+        }
+    }
+}

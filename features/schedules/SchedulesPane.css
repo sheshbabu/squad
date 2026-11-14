@@ -1,0 +1,91 @@
+.schedules-pane {
+    display: flex;
+    flex-direction: column;
+
+    &.is-form {
+        .input-container input,
+        .input-container textarea {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .input-container textarea {
+            height: auto;
+            min-height: 100px;
+            font: var(--p1);
+        }
+
+        .form-field-container:first-child {
+            margin-top: 0;
+        }
+    }
+
+    .schedules-pane-empty {
+        font: var(--sm);
+        color: var(--text-secondary);
+    }
+
+    .schedules-pane-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        padding: var(--spacing-2) 0;
+        border-bottom: 1px solid var(--neutral-100);
+
+        .schedules-pane-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .schedules-pane-name {
+            font-weight: 600;
+        }
+
+        .schedules-pane-timing {
+            font: var(--xs);
+            color: var(--text-secondary);
+        }
+
+        svg.lucide {
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+        }
+    }
+
+    .schedules-pane-when {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+    }
+
+    .schedules-pane-time {
+        height: 36px;
+        padding: 0 var(--spacing-2);
+        border: 1px solid var(--neutral-200);
+        border-radius: var(--radius-1);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+
+    .schedules-pane-weekdays {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-3);
+        margin-top: var(--spacing-2);
+    }
+
+    .schedules-pane-weekday {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-1);
+        font: var(--sm);
+        font-weight: normal;
+    }
+
+    .schedules-pane-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--spacing-2);
+        margin-top: var(--spacing-4);
+    }
+}

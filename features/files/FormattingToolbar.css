@@ -1,0 +1,83 @@
+.formatting-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-1);
+    align-items: center;
+
+    .formatting-toolbar-group {
+        display: flex;
+        padding-right: var(--spacing-2);
+
+        &:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+
+        .formatting-button {
+            background: none;
+            border: none;
+            border-radius: var(--radius-1);
+            padding: var(--spacing-1);
+            cursor: pointer;
+            font: var(--xs);
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: background-color var(--transition-fast) ease;
+            min-width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            margin: var(--spacing-1);
+
+            &:hover {
+                background-color: var(--neutral-200);
+            }
+
+            &:active {
+                background-color: var(--neutral-100);
+                transform: translateY(0);
+                box-shadow: none;
+            }
+
+            svg.material-icon {
+                width: 20px;
+                height: 20px;
+                fill: var(--neutral-500);
+            }
+
+            strong,
+            em,
+            s,
+            mark,
+            code {
+                font: var(--xs);
+                font-weight: 600;
+                margin: 0;
+                padding: 0;
+            }
+
+            mark {
+                background: var(--yellow-200);
+                border-radius: 2px;
+                padding: 1px 2px;
+            }
+
+            code {
+                background: var(--neutral-100);
+                border-radius: 2px;
+                padding: 1px 2px;
+                font-family: var(--font-family-code);
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 948px) {
+    .formatting-toolbar {
+        display: none;
+    }
+}

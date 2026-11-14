@@ -1,0 +1,156 @@
+.dropdown {
+    .dropdown-hint {
+        color: var(--neutral-400);
+        font: var(--sm);
+    }
+
+    .dropdown-anchor {
+        position: relative;
+        width: 100%;
+    }
+
+    .dropdown-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-2);
+        width: 100%;
+        height: 36px;
+        padding: 0 var(--spacing-2);
+        border: 1px solid var(--neutral-200);
+        border-radius: var(--radius-1);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font: var(--p1);
+        text-align: left;
+        cursor: pointer;
+        outline: none;
+        transition: border-color var(--transition-fast);
+
+        &:focus-visible {
+            border-color: var(--neutral-600);
+        }
+
+        .dropdown-button-label,
+        .dropdown-placeholder {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-placeholder {
+            color: var(--neutral-400);
+        }
+
+        svg.lucide {
+            flex-shrink: 0;
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+            color: var(--neutral-400);
+            transition: transform var(--transition-fast);
+        }
+    }
+
+    &.is-open .dropdown-button {
+        border-color: var(--neutral-600);
+
+        svg.lucide {
+            transform: rotate(180deg);
+        }
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: var(--z-base);
+        display: flex;
+        flex-direction: column;
+        margin-top: var(--spacing-1);
+        border: 1px solid var(--neutral-100);
+        border-radius: var(--radius-1);
+        background-color: var(--bg-secondary);
+        box-shadow: var(--shadow-4);
+        overflow: hidden;
+        animation: dropdown-slide-down var(--transition-fast) ease-out;
+
+        .dropdown-search {
+            height: 36px;
+            padding: 0 var(--spacing-3);
+            border: none;
+            border-bottom: 1px solid var(--neutral-100);
+            background-color: transparent;
+            color: var(--text-primary);
+            font: var(--sm);
+            outline: none;
+        }
+
+        .dropdown-options {
+            max-height: 280px;
+            margin: 0;
+            padding: var(--spacing-1);
+            overflow-y: auto;
+            list-style: none;
+        }
+
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-2);
+            min-height: 36px;
+            padding: var(--spacing-1) var(--spacing-2);
+            border-radius: var(--radius-1);
+            cursor: pointer;
+
+            &.is-highlighted {
+                background-color: var(--neutral-200);
+            }
+
+            .dropdown-option-text {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .dropdown-option-label,
+            .dropdown-option-description {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .dropdown-option-label {
+                font: var(--sm);
+                font-weight: 500;
+                color: var(--text-primary);
+            }
+
+            .dropdown-option-description {
+                font: var(--xs);
+                color: var(--text-secondary);
+            }
+
+            svg.lucide {
+                flex-shrink: 0;
+                width: var(--icon-sm);
+                height: var(--icon-sm);
+                color: var(--neutral-600);
+            }
+        }
+
+        .dropdown-empty {
+            padding: var(--spacing-2);
+            font: var(--sm);
+            color: var(--text-secondary);
+        }
+    }
+}
+
+@keyframes dropdown-slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}

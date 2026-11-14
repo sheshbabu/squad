@@ -1,0 +1,126 @@
+.composer {
+    padding: var(--spacing-3) var(--spacing-6) var(--spacing-6);
+
+    .composer-box {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2);
+        max-width: var(--detail-max-width);
+        margin: 0 auto;
+        padding: var(--spacing-2);
+        border: 1px solid var(--neutral-200);
+        border-radius: 24px;
+        background-color: var(--bg-primary);
+        box-shadow: var(--shadow-2);
+    }
+
+    /* Buttons stay on the last line as the input grows, like most chat apps. */
+    .composer-row {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--spacing-2);
+    }
+
+    .composer-input {
+        flex: 1;
+        min-width: 0;
+        min-height: 32px;
+        max-height: 240px;
+        padding: 5px 0;
+        font: var(--p1);
+        border: none;
+        outline: none;
+        resize: none;
+        background: none;
+        color: var(--text-primary);
+        field-sizing: content;
+    }
+
+    .composer-button {
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: var(--neutral-100);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: background-color var(--transition-fast) ease, opacity var(--transition-fast) ease;
+
+        &:hover {
+            background-color: var(--neutral-200);
+        }
+
+        &.is-primary {
+            background-color: var(--neutral-900);
+            color: var(--neutral-50);
+
+            &:hover {
+                background-color: var(--neutral-700);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        svg.lucide {
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+
+            path,
+            rect {
+                stroke: currentColor;
+            }
+        }
+    }
+
+    .composer-file-input {
+        display: none;
+    }
+
+    .composer-attachments {
+        padding: 0 var(--spacing-1);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-2);
+    }
+
+    .composer-attachment {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-1);
+        max-width: 220px;
+        padding: 2px var(--spacing-2);
+        border-radius: var(--radius-1);
+        background-color: var(--neutral-100);
+        font: var(--xs);
+
+        &.is-uploading {
+            color: var(--text-secondary);
+        }
+
+        .composer-attachment-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        svg.lucide {
+            flex-shrink: 0;
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+            cursor: pointer;
+        }
+    }
+}
+
+@media screen and (max-width: 948px) {
+    .composer {
+        padding: var(--spacing-2) var(--spacing-4) var(--spacing-4);
+    }
+}

@@ -1,0 +1,440 @@
+.file-view {
+    flex: 1;
+    min-height: 0;
+    padding: var(--spacing-6);
+    padding-top: 0;
+    overflow-y: auto;
+    word-wrap: break-word;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.is-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .file-view-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        z-index: var(--z-base);
+
+        .file-view-toolbar-left,
+        .file-view-toolbar-right {
+            display: flex;
+        }
+
+        .file-view-back {
+            display: none;
+        }
+
+        svg.lucide {
+            cursor: pointer;
+            width: var(--icon-md);
+            height: var(--icon-md);
+        }
+    }
+
+    .file-view-title {
+        font: var(--h1);
+        margin-bottom: var(--spacing-4);
+    }
+
+    .formatting-toolbar {
+        margin: var(--spacing-3) 0;
+    }
+
+    .file-view-empty-text {
+        font: var(--sm);
+        padding: var(--spacing-4);
+        color: var(--neutral-400);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 64px;
+    }
+
+    .file-view-textarea {
+        display: block;
+        width: 100%;
+        font-family: var(--font-family-code);
+        outline: none;
+        resize: none;
+        border: 1px solid var(--neutral-200);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        padding: var(--spacing-4);
+        border-radius: var(--radius-1);
+    }
+}
+
+@media screen and (max-width: 948px) {
+    .file-view {
+        padding: var(--spacing-4);
+        padding-top: 0;
+
+        /* The back chevron's point sits 7px inside its icon, so the button hangs further out to line the point up with the title. */
+        .file-view-toolbar .file-view-toolbar-left {
+            margin-left: -12px;
+        }
+
+        .file-view-toolbar .file-view-back {
+            display: flex;
+        }
+    }
+}
+
+.file-view-rendered {
+    display: block;
+    overflow-x: auto;
+
+    strong {
+        font-weight: 600;
+    }
+
+    em {
+        font-style: italic;
+    }
+
+    h1 {
+        font: var(--h2);
+    }
+
+    h2 {
+        font: var(--h3);
+    }
+
+    h3 {
+        font: var(--h5);
+    }
+
+    h4,
+    h5,
+    h6 {
+        font: var(--h6);
+    }
+
+    p,
+    blockquote,
+    ul,
+    ol,
+    table {
+        font: var(--p1);
+        margin: 0 0 var(--spacing-4) 0;
+    }
+
+    li {
+        font: var(--p1);
+        margin-bottom: var(--spacing-1);
+
+        p {
+            margin: 0;
+        }
+    }
+
+    a {
+        color: var(--neutral-500);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--neutral-500);
+    }
+
+    img {
+        width: auto;
+        max-width: 100%;
+        cursor: pointer;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: var(--spacing-8);
+        margin-bottom: var(--spacing-3);
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    h1:first-child,
+    h2:first-child,
+    h3:first-child,
+    h4:first-child,
+    h5:first-child,
+    h6:first-child {
+        margin-top: 0;
+    }
+
+    code {
+        font: var(--code);
+        background-color: var(--neutral-50);
+        border-radius: var(--radius-1);
+        padding: var(--spacing-1) var(--spacing-2);
+    }
+
+    .code-block {
+        position: relative;
+        margin: var(--spacing-4) 0;
+
+        pre {
+            margin: 0;
+        }
+
+        .code-copy-button {
+            position: absolute;
+            top: var(--spacing-2);
+            right: var(--spacing-2);
+            z-index: var(--z-base);
+            display: grid;
+            place-items: center;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border: none;
+            border-radius: var(--radius-1);
+            background-color: var(--neutral-50);
+            color: var(--text-secondary);
+            cursor: pointer;
+
+            &:hover {
+                color: var(--text-primary);
+            }
+
+            svg.lucide {
+                width: var(--icon-sm);
+                height: var(--icon-sm);
+            }
+
+            .code-copied-icon {
+                display: none;
+            }
+
+            &.is-copied {
+                color: var(--green-600);
+
+                .code-copy-icon {
+                    display: none;
+                }
+
+                .code-copied-icon {
+                    display: block;
+                }
+            }
+        }
+
+        @media (hover: hover) {
+            .code-copy-button {
+                opacity: 0;
+                transition: opacity var(--transition-fast) ease;
+
+                &:focus-visible,
+                &.is-copied {
+                    opacity: 1;
+                }
+            }
+
+            &:hover .code-copy-button {
+                opacity: 1;
+            }
+        }
+    }
+
+    pre {
+        margin: var(--spacing-4) 0;
+        padding: var(--spacing-3);
+        background-color: var(--neutral-50);
+        border-radius: var(--radius-1);
+        overflow: scroll;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        code {
+            background-color: unset;
+            border-radius: 0;
+            padding: 0;
+        }
+
+        * {
+            font: var(--code);
+        }
+    }
+
+    blockquote {
+        border-left: 3px solid var(--neutral-700);
+        padding-left: var(--spacing-3);
+        margin: var(--spacing-4) 0;
+    }
+
+    ul {
+        padding-left: var(--spacing-6);
+    }
+
+    ol {
+        padding-left: 28px;
+    }
+
+    p+ul,
+    p+ol,
+    h1+ul,
+    h1+ol,
+    h2+ul,
+    h2+ol,
+    h3+ul,
+    h3+ol,
+    h4+ul,
+    h4+ol,
+    h5+ul,
+    h5+ol,
+    h6+ul,
+    h6+ol {
+        margin-top: -8px;
+    }
+
+    li>ul,
+    li>ol {
+        margin: var(--spacing-1) 0 0 0;
+    }
+
+    li>ul>li:last-child,
+    li>ol>li:last-child {
+        margin-bottom: 0;
+    }
+
+    .task-list-container {
+        list-style: none;
+        padding: 0;
+        margin: var(--spacing-1) 0 var(--spacing-4) 0;
+    }
+
+    .task-list-item {
+        padding-left: 0;
+    }
+
+    .task-list-item:has(> .task-list-container) {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .task-item-content {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+    }
+
+    .task-list-item-checkbox {
+        flex-shrink: 0;
+        cursor: default;
+        color: var(--neutral-400);
+        transition: color var(--transition-fast) ease;
+
+        &:hover {
+            color: var(--neutral-600);
+        }
+
+        &.is-checked {
+            color: var(--neutral-700);
+
+            &:hover {
+                color: var(--neutral-600);
+            }
+        }
+    }
+
+    .task-list-item.enabled>.task-item-content>.task-list-item-checkbox {
+        cursor: pointer;
+    }
+
+    .task-list-item>.task-list-container {
+        padding-left: var(--spacing-6);
+        margin-bottom: 0;
+    }
+
+    .table-block {
+        overflow-x: auto;
+        margin: var(--spacing-4) 0;
+    }
+
+    table {
+        width: max-content;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid var(--neutral-200);
+        padding: var(--spacing-2) var(--spacing-3);
+    }
+
+    th {
+        text-align: left;
+    }
+
+    hr {
+        margin: var(--spacing-8) 0;
+        border: 0;
+        border-top: 1px solid var(--neutral-100);
+    }
+
+    s {
+        color: var(--neutral-400);
+    }
+
+    mark {
+        background: rgb(from var(--yellow-400) r g b / 0.1);
+        color: var(--yellow-500);
+        border-radius: var(--radius-1);
+        padding: 2px;
+    }
+}
+
+.has-foldable-headings {
+    >h1,
+    >h2,
+    >h3 {
+        cursor: pointer;
+        transition: color var(--transition-fast) ease;
+    }
+
+    @media (hover: hover) {
+        >h1:hover,
+        >h2:hover,
+        >h3:hover {
+            color: var(--neutral-600);
+        }
+    }
+
+    /* Balanced wrapping pushes the fold pill onto its own line. */
+    >h1.is-folded,
+    >h2.is-folded,
+    >h3.is-folded {
+        text-wrap: wrap;
+    }
+
+    >h1.is-folded::after,
+    >h2.is-folded::after,
+    >h3.is-folded::after {
+        content: "\22EF";
+        display: inline-block;
+        margin-left: var(--spacing-2);
+        padding: 0 var(--spacing-2);
+        border-radius: var(--radius-full);
+        background-color: var(--neutral-100);
+        color: var(--neutral-500);
+        font: var(--sm);
+        font-weight: 600;
+        vertical-align: middle;
+    }
+}

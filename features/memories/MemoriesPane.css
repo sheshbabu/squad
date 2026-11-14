@@ -1,0 +1,27 @@
+.memories-pane {
+    display: flex;
+    flex-direction: column;
+
+    &.is-empty {
+        font: var(--sm);
+        color: var(--text-secondary);
+    }
+
+    .memories-pane-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-2);
+        padding: var(--spacing-2) 0;
+        border-bottom: 1px solid var(--neutral-100);
+
+        .memories-pane-content {
+            flex: 1;
+            font: var(--sm);
+        }
+
+        svg.lucide {
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+        }
+    }
+}

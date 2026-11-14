@@ -1,0 +1,15 @@
+.offline-indicator {
+    position: fixed;
+    top: 0;
+    background: var(--red-600);
+    color: white;
+    text-align: center;
+    font: var(--sm);
+    z-index: var(--z-critical);
+    left: calc(50% - 75px);
+    width: 150px;
+    padding: var(--spacing-1);
+    border-radius: var(--radius-1);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
