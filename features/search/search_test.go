@@ -35,3 +35,21 @@ func TestSearchBotMessagesStaysWithinBot(t *testing.T) {
 		t.Fatalf("expected only the Finance bot's chat, got %+v", matches)
 	}
 }
+
+func TestSearchBotMessagesRanksScheduledChatsLast(t *testing.T) {
+	testutil.SetupDB(t)
+
+	sqlite.DB.Exec("INSERT INTO bots (name, model) VALUES ('News', 'm')")
+	sqlite.DB.Exec("INSERT INTO schedules (bot_id, name, prompt, frequency, time_of_day, next_run_at) VALUES (1, 'Daily', 'news', 'daily', '08:00', CURRENT_TIMESTAMP)")
+	sqlite.DB.Exec("INSERT INTO threads (bot_id, title, schedule_id) VALUES (1, 'Daily news', 1)")
+	sqlite.DB.Exec("INSERT INTO threads (bot_id, title) VALUES (1, 'Our chat')")
+	sqlite.DB.Exec("INSERT INTO messages (thread_id, role, content) VALUES (1, 'assistant', 'Singapore news Singapore news Singapore'), (2, 'user', 'I moved to Singapore')")
+
+	matches, err := SearchBotMessages(1, BuildAnyWordQuery("Singapore"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(matches) != 2 || matches[0].Title != "Our chat" {
+		t.Fatalf("expected the chat with the user first, got %+v", matches)
+	}
+}

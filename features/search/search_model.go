@@ -78,7 +78,7 @@ func SearchBotMessages(botID int, matchQuery string) ([]ChatMatch, error) {
 		JOIN messages m ON m.message_id = messages_fts.rowid
 		JOIN threads t ON t.thread_id = m.thread_id
 		WHERE messages_fts MATCH ? AND t.bot_id = ?
-		ORDER BY rank
+		ORDER BY t.schedule_id IS NOT NULL, rank
 		LIMIT 10
 	`
 
