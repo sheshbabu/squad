@@ -60,3 +60,45 @@ func SearchMessages(matchQuery string) ([]Result, error) {
 
 	return results, nil
 }
+
+type ChatMatch struct {
+	ThreadID  int       `json:"threadId"`
+	Title     string    `json:"title"`
+	Role      string    `json:"role"`
+	Snippet   string    `json:"snippet"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+func SearchBotMessages(botID int, matchQuery string) ([]ChatMatch, error) {
+	matches := []ChatMatch{}
+
+	query := `
+		SELECT t.thread_id, t.title, m.role, snippet(messages_fts, 0, '', '', '…', 64), m.created_at
+		FROM messages_fts
+		JOIN messages m ON m.message_id = messages_fts.rowid
+		JOIN threads t ON t.thread_id = m.thread_id
+		WHERE messages_fts MATCH ? AND t.bot_id = ?
+		ORDER BY rank
+		LIMIT 10
+	`
+
+	rows, err := sqlite.DB.Query(query, matchQuery, botID)
+	if err != nil {
+		return nil, fmt.Errorf("error searching bot messages: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var match ChatMatch
+		if err := rows.Scan(&match.ThreadID, &match.Title, &match.Role, &match.Snippet, &match.CreatedAt); err != nil {
+			return nil, fmt.Errorf("error scanning chat match: %w", err)
+		}
+		matches = append(matches, match)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating chat matches: %w", err)
+	}
+
+	return matches, nil
+}

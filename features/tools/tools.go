@@ -31,6 +31,7 @@ var httpClient = &http.Client{Timeout: 60 * time.Second}
 func Init() {
 	registerMemoryTools()
 	registerFileTools()
+	registerChatTools()
 	registerFetchTool()
 	registerHackerNewsTools()
 	registerExaTools()

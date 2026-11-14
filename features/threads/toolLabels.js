@@ -6,6 +6,7 @@ const TOOL_LABELS = {
   write_file: args => `Writing ${args.name}`,
   edit_file: args => `Editing ${args.name}`,
   delete_file: args => `Deleting ${args.name}`,
+  search_chats: args => `Searching past chats for "${args.query}"`,
   fetch_url: args => `Reading ${getHostname(args.url)}`,
   web_search: args => `Searching the web for "${args.query}"`,
   hackernews_search: args => `Searching Hacker News for "${args.query}"`,

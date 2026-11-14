@@ -18,6 +18,7 @@ type ToolGroup struct {
 var groups = []ToolGroup{
 	{GroupID: "memory", Name: "Memory", Description: "Save and forget facts across chats."},
 	{GroupID: "files", Name: "Files", Description: "Read and write the bot's markdown files."},
+	{GroupID: "chats", Name: "Past Chats", Description: "Search earlier chats with this bot."},
 	{GroupID: "web", Name: "Web", Description: "Read web pages, and search the web when EXA_API_KEY is set."},
 	{GroupID: "hackernews", Name: "Hacker News", Description: "Search stories and read comments."},
 	{GroupID: "reddit", Name: "Reddit", Description: "Search posts and read comments.", SetupHint: "Set the REDDIT_ environment variables to use Reddit."},
