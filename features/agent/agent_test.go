@@ -224,3 +224,40 @@ func TestCancelKeepsPartialText(t *testing.T) {
 		t.Fatalf("expected idle after cancel, got %s", thread.Status)
 	}
 }
+
+func TestBuildRequestClearsToolResultsFromEarlierTurns(t *testing.T) {
+	testutil.SetupDB(t)
+
+	bot, err := bots.CreateBot(bots.Bot{Name: "Helper", Color: "gray", Gateway: "fake", Model: "fake-model"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	toolCalls := func(id string) []llm.ToolCall {
+		return []llm.ToolCall{{ID: id, Type: "function", Function: llm.FunctionCall{Name: "fetch_url"}}}
+	}
+	messages := []threads.Message{
+		{Role: threads.ROLE_USER, Content: "Summarize the news"},
+		{Role: threads.ROLE_ASSISTANT, ToolCalls: toolCalls("old")},
+		{Role: threads.ROLE_TOOL, ToolCallID: "old", Content: "old page"},
+		{Role: threads.ROLE_ASSISTANT, Content: "Here is the news"},
+		{Role: threads.ROLE_USER, Content: "And Singapore?"},
+		{Role: threads.ROLE_ASSISTANT, ToolCalls: toolCalls("new")},
+		{Role: threads.ROLE_TOOL, ToolCallID: "new", Content: "new page"},
+	}
+
+	request, err := buildRequest(bot, threads.Thread{}, messages)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	toolContents := []string{}
+	for _, message := range request.Messages {
+		if message.Role == "tool" {
+			toolContents = append(toolContents, message.Content.(string))
+		}
+	}
+	if len(toolContents) != 2 || toolContents[0] != clearedToolResult || toolContents[1] != "new page" {
+		t.Fatalf("expected only the earlier turn's result to be cleared, got %q", toolContents)
+	}
+}

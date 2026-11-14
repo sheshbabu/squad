@@ -152,3 +152,12 @@ func TestToolGroupsFollowBotSettings(t *testing.T) {
 		t.Fatalf("expected a disabled tool to be refused, got %q", output)
 	}
 }
+
+func TestTruncateKeepsHeadAndTail(t *testing.T) {
+	text := "HEAD" + strings.Repeat("x", maxOutputLength*2) + "TAIL"
+	output := truncate(text)
+
+	if !strings.HasPrefix(output, "HEAD") || !strings.HasSuffix(output, "TAIL") || !strings.Contains(output, "characters cut]") {
+		t.Fatalf("expected head, cut marker and tail, got %q…", output[:40])
+	}
+}

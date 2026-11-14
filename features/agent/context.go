@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+const clearedToolResult = "[Old tool result cleared. Run the tool again if you need it.]"
+
 func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Message) (llm.Request, error) {
 	memoryList, err := memories.GetMemories(bot.BotID)
 	if err != nil {
@@ -28,7 +30,14 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 
 	llmMessages := []llm.Message{{Role: "system", Content: buildSystemPrompt(bot, thread, memoryList, fileList)}}
 
-	for _, message := range messages {
+	currentTurnStart := 0
+	for i, message := range messages {
+		if message.Role == threads.ROLE_USER {
+			currentTurnStart = i
+		}
+	}
+
+	for i, message := range messages {
 		switch message.Role {
 		case threads.ROLE_USER:
 			llmMessages = append(llmMessages, llm.Message{Role: "user", Content: buildUserContent(message)})
@@ -38,7 +47,11 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 			}
 			llmMessages = append(llmMessages, llm.Message{Role: "assistant", Content: message.Content, ToolCalls: message.ToolCalls, ReasoningDetails: message.ReasoningDetails})
 		case threads.ROLE_TOOL:
-			llmMessages = append(llmMessages, llm.Message{Role: "tool", Content: message.Content, ToolCallID: message.ToolCallID})
+			content := message.Content
+			if i < currentTurnStart {
+				content = clearedToolResult
+			}
+			llmMessages = append(llmMessages, llm.Message{Role: "tool", Content: content, ToolCallID: message.ToolCallID})
 		}
 	}
 

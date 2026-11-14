@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const maxOutputLength = 20000
+const maxOutputLength = 10000
 
 type Tool struct {
 	Group       string
@@ -90,7 +90,10 @@ func truncate(text string) string {
 	if len(runes) <= maxOutputLength {
 		return text
 	}
-	return string(runes[:maxOutputLength]) + "\n\n[truncated]"
+	headLength := maxOutputLength * 3 / 4
+	tailLength := maxOutputLength - headLength
+	cutLength := len(runes) - headLength - tailLength
+	return fmt.Sprintf("%s\n\n[%d characters cut]\n\n%s", string(runes[:headLength]), cutLength, string(runes[len(runes)-tailLength:]))
 }
 
 func parseArguments(arguments string, target any) error {
