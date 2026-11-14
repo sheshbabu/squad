@@ -33,6 +33,9 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 		case threads.ROLE_USER:
 			llmMessages = append(llmMessages, llm.Message{Role: "user", Content: buildUserContent(message)})
 		case threads.ROLE_ASSISTANT:
+			if message.Content == "" && len(message.ToolCalls) == 0 {
+				continue
+			}
 			llmMessages = append(llmMessages, llm.Message{Role: "assistant", Content: message.Content, ToolCalls: message.ToolCalls, ReasoningDetails: message.ReasoningDetails})
 		case threads.ROLE_TOOL:
 			llmMessages = append(llmMessages, llm.Message{Role: "tool", Content: message.Content, ToolCallID: message.ToolCallID})

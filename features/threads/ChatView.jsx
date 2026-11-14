@@ -264,6 +264,10 @@ export default function ChatView({ bot, threadId, onThreadChange, onThreadDelete
     }
   }
 
+  if (isWorking && partialText === "" && chatItems.length > 0 && chatItems[chatItems.length - 1].toolCalls !== undefined) {
+    chatItems.pop();
+  }
+
   const messageItems = chatItems.map(item => {
     if (item.toolCalls !== undefined) {
       return <ToolActivity key={item.key} toolCalls={item.toolCalls} toolResultsById={toolResultsById} />;

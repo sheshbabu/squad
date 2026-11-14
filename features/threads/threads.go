@@ -211,19 +211,19 @@ func FinishCancelledRun(threadID int, partialContent string) error {
 		return err
 	}
 
-	if partialContent != "" {
-		message, err := InsertMessage(Message{ThreadID: threadID, Role: ROLE_ASSISTANT, Content: partialContent, IsCancelled: true})
-		if err != nil {
-			return err
-		}
-		stream.Publish(threadID, stream.Event{Type: "message", Data: message})
-	}
-
 	filled, err := FillPendingToolCalls(threadID, "Cancelled by user")
 	if err != nil {
 		return err
 	}
 	for _, message := range filled {
+		stream.Publish(threadID, stream.Event{Type: "message", Data: message})
+	}
+
+	if partialContent != "" || thread.Status == STATUS_WORKING {
+		message, err := InsertMessage(Message{ThreadID: threadID, Role: ROLE_ASSISTANT, Content: partialContent, IsCancelled: true})
+		if err != nil {
+			return err
+		}
 		stream.Publish(threadID, stream.Event{Type: "message", Data: message})
 	}
 

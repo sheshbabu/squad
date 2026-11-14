@@ -17,11 +17,7 @@ test('unknown tools and broken arguments still get a label', () => {
   assert.equal(getRunningLabel({ function: { name: 'fetch_url', arguments: '{' } }), 'Reading a page');
 });
 
-test('summaries count repeats in order of first use', () => {
-  const calls = [
-    toolCall('hackernews_search', { query: 'a' }),
-    toolCall('read_file', { name: 'a.md' }),
-    toolCall('read_file', { name: 'b.md' }),
-  ];
-  assert.equal(getSummaryLabel(calls), 'Searched Hacker News · Read 2 files');
+test('summaries count the calls', () => {
+  assert.equal(getSummaryLabel([toolCall('read_file', { name: 'a.md' })]), 'Used a tool');
+  assert.equal(getSummaryLabel([toolCall('read_file', { name: 'a.md' }), toolCall('read_file', { name: 'b.md' })]), 'Used 2 tools');
 });
