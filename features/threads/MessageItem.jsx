@@ -113,15 +113,20 @@ function MessageActions({ content, createdAt }) {
       .catch(() => showToast("Couldn't copy message."));
   }
 
-  let copyIcon = <CopyIcon />;
-  if (isCopied) {
-    copyIcon = <CheckIcon />;
+  let copyButton = null;
+  const isClipboardAvailable = typeof navigator.clipboard !== 'undefined';
+  if (isClipboardAvailable) {
+    let copyIcon = <CopyIcon />;
+    if (isCopied) {
+      copyIcon = <CheckIcon />;
+    }
+    copyButton = <button type="button" className="message-item-action" onClick={handleCopyClick} title="Copy">{copyIcon}</button>;
   }
 
   return (
     <div className="message-item-actions">
       <span className="message-item-time" title={new Date(createdAt).toLocaleString()}>{formatDate(new Date(createdAt))}</span>
-      <button type="button" className="message-item-action" onClick={handleCopyClick} title="Copy">{copyIcon}</button>
+      {copyButton}
     </div>
   );
 }
