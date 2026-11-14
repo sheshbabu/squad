@@ -154,7 +154,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
       <SettingsSection title="Model">
         <Dropdown id="bot-gateway" label="Gateway" options={gatewayOptions} value={gateway} onChange={setGateway} />
         <Dropdown id="bot-model" label="Model" hint="Only models that support tool calls are listed." placeholder="Select a model" options={modelOptions} value={model} isSearchable onChange={handleModelChange} />
-        <Dropdown id="bot-provider" label="Provider" options={providerOptions} value={provider} onChange={setProvider} />
+        <Dropdown id="bot-provider" label="Provider" options={providerOptions} value={provider} isSearchable onChange={setProvider} />
       </SettingsSection>
     );
   }
