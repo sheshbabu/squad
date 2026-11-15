@@ -1,0 +1,1 @@
+ALTER TABLE bots ADD COLUMN reasoning_effort TEXT NOT NULL DEFAULT '';

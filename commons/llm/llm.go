@@ -68,11 +68,12 @@ type ToolFunction struct {
 }
 
 type Request struct {
-	Model    string
-	Provider string
-	User     string
-	Messages []Message
-	Tools    []Tool
+	Model           string
+	Provider        string
+	ReasoningEffort string
+	User            string
+	Messages        []Message
+	Tools           []Tool
 }
 
 type Response struct {
@@ -189,6 +190,9 @@ func (g Gateway) buildBody(request Request, isStream bool) map[string]any {
 		body["usage"] = map[string]any{"include": true}
 		if request.Provider != "" {
 			body["provider"] = map[string]any{"order": []string{request.Provider}, "allow_fallbacks": false}
+		}
+		if request.ReasoningEffort != "" {
+			body["reasoning"] = map[string]any{"effort": request.ReasoningEffort}
 		}
 	}
 

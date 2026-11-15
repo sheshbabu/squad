@@ -10,12 +10,14 @@ import (
 )
 
 type Model struct {
-	ModelID         string   `json:"modelId"`
-	Name            string   `json:"name"`
-	ContextLength   int      `json:"contextLength"`
-	InputModalities []string `json:"inputModalities"`
-	PromptPrice     string   `json:"promptPrice"`
-	CompletionPrice string   `json:"completionPrice"`
+	ModelID                string   `json:"modelId"`
+	Name                   string   `json:"name"`
+	ContextLength          int      `json:"contextLength"`
+	InputModalities        []string `json:"inputModalities"`
+	PromptPrice            string   `json:"promptPrice"`
+	CompletionPrice        string   `json:"completionPrice"`
+	ReasoningEfforts       []string `json:"reasoningEfforts"`
+	DefaultReasoningEffort string   `json:"defaultReasoningEffort"`
 }
 
 type Provider struct {
@@ -56,6 +58,10 @@ func (g Gateway) ListModels(ctx context.Context) ([]Model, error) {
 				Completion string `json:"completion"`
 			} `json:"pricing"`
 			SupportedParameters []string `json:"supported_parameters"`
+			Reasoning           struct {
+				SupportedEfforts []string `json:"supported_efforts"`
+				DefaultEffort    string   `json:"default_effort"`
+			} `json:"reasoning"`
 		} `json:"data"`
 	}
 
@@ -71,12 +77,14 @@ func (g Gateway) ListModels(ctx context.Context) ([]Model, error) {
 		}
 
 		models = append(models, Model{
-			ModelID:         item.ID,
-			Name:            item.Name,
-			ContextLength:   item.ContextLength,
-			InputModalities: item.Architecture.InputModalities,
-			PromptPrice:     item.Pricing.Prompt,
-			CompletionPrice: item.Pricing.Completion,
+			ModelID:                item.ID,
+			Name:                   item.Name,
+			ContextLength:          item.ContextLength,
+			InputModalities:        item.Architecture.InputModalities,
+			PromptPrice:            item.Pricing.Prompt,
+			CompletionPrice:        item.Pricing.Completion,
+			ReasoningEfforts:       item.Reasoning.SupportedEfforts,
+			DefaultReasoningEffort: item.Reasoning.DefaultEffort,
 		})
 	}
 

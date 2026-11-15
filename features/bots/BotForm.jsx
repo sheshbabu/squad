@@ -11,6 +11,16 @@ import './BotForm.css';
 
 const { useState, useEffect } = React;
 
+const REASONING_EFFORT_LABELS = {
+  none: "Off",
+  minimal: "Minimal",
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+  xhigh: "Extra high",
+  max: "Max",
+};
+
 const COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"];
 
 // A new bot needs every field before it can be created, while an existing bot edits its profile and its model in separate panes.
@@ -25,6 +35,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
   const [gateway, setGateway] = useState(bot?.gateway ?? "");
   const [model, setModel] = useState(bot?.model ?? "");
   const [provider, setProvider] = useState(bot?.provider ?? "");
+  const [reasoningEffort, setReasoningEffort] = useState(bot?.reasoningEffort ?? "");
   const [gateways, setGateways] = useState([]);
   const [models, setModels] = useState([]);
   const [providers, setProviders] = useState([]);
@@ -61,7 +72,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
     event.preventDefault();
     setIsSaving(true);
 
-    const payload = { name, color, icon, systemPrompt, gateway, model, provider };
+    const payload = { name, color, icon, systemPrompt, gateway, model, provider, reasoningEffort };
     const promise = bot === undefined ? ApiClient.createBot(payload) : ApiClient.updateBot(bot.botId, payload);
 
     // A new bot closes the modal and opens its chat, while an edit keeps the settings open like Zen's.
@@ -90,6 +101,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
   function handleModelChange(modelId) {
     setModel(modelId);
     setProvider("");
+    setReasoningEffort("");
   }
 
   const colorOptions = COLORS.map(item => {
@@ -127,6 +139,20 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
     providerOptions.push({ value: provider, label: provider });
   }
 
+  let reasoningDropdown = null;
+  const selectedModel = models.find(item => item.modelId === model);
+  if (selectedModel !== undefined && selectedModel.reasoningEfforts !== null && selectedModel.reasoningEfforts.length > 0) {
+    let defaultLabel = "Default";
+    if (selectedModel.defaultReasoningEffort !== "") {
+      defaultLabel = `Default (${getReasoningEffortLabel(selectedModel.defaultReasoningEffort)})`;
+    }
+    const reasoningOptions = [{ value: "", label: defaultLabel }];
+    for (const effort of selectedModel.reasoningEfforts) {
+      reasoningOptions.push({ value: effort, label: getReasoningEffortLabel(effort) });
+    }
+    reasoningDropdown = <Dropdown id="bot-reasoning-effort" label="Thinking" hint="Less thinking is cheaper and faster, more helps with harder tasks." options={reasoningOptions} value={reasoningEffort} onChange={setReasoningEffort} />;
+  }
+
   let profileSection = null;
   if (hasProfile) {
     profileSection = (
@@ -155,6 +181,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
         <Dropdown id="bot-gateway" label="Gateway" options={gatewayOptions} value={gateway} onChange={setGateway} />
         <Dropdown id="bot-model" label="Model" hint="Only models that support tool calls are listed." placeholder="Select a model" options={modelOptions} value={model} isSearchable onChange={handleModelChange} />
         <Dropdown id="bot-provider" label="Provider" options={providerOptions} value={provider} isSearchable onChange={setProvider} />
+        {reasoningDropdown}
       </SettingsSection>
     );
   }
@@ -178,4 +205,8 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
       {deleteSection}
     </div>
   );
+}
+
+function getReasoningEffortLabel(effort) {
+  return REASONING_EFFORT_LABELS[effort] ?? effort;
 }

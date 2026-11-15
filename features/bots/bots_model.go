@@ -11,14 +11,15 @@ import (
 )
 
 type Bot struct {
-	BotID        int    `json:"botId"`
-	Name         string `json:"name"`
-	Icon         string `json:"icon"`
-	Color        string `json:"color"`
-	SystemPrompt string `json:"systemPrompt"`
-	Gateway      string `json:"gateway"`
-	Model        string `json:"model"`
-	Provider     string `json:"provider"`
+	BotID           int    `json:"botId"`
+	Name            string `json:"name"`
+	Icon            string `json:"icon"`
+	Color           string `json:"color"`
+	SystemPrompt    string `json:"systemPrompt"`
+	Gateway         string `json:"gateway"`
+	Model           string `json:"model"`
+	Provider        string `json:"provider"`
+	ReasoningEffort string `json:"reasoningEffort"`
 	// Groups are stored as turned off rather than on, so every available tool starts enabled, including ones added later.
 	DisabledToolGroups []string  `json:"disabledToolGroups"`
 	ZenAPIToken        string    `json:"zenApiToken"`
@@ -27,12 +28,12 @@ type Bot struct {
 	UpdatedAt          time.Time `json:"updatedAt"`
 }
 
-const botColumns = "bot_id, name, icon, color, system_prompt, gateway, model, provider, disabled_tool_groups, zen_api_token, webhook_token, created_at, updated_at"
+const botColumns = "bot_id, name, icon, color, system_prompt, gateway, model, provider, reasoning_effort, disabled_tool_groups, zen_api_token, webhook_token, created_at, updated_at"
 
 func scanBot(row interface{ Scan(...any) error }) (Bot, error) {
 	var bot Bot
 	var disabledToolGroups string
-	err := row.Scan(&bot.BotID, &bot.Name, &bot.Icon, &bot.Color, &bot.SystemPrompt, &bot.Gateway, &bot.Model, &bot.Provider, &disabledToolGroups, &bot.ZenAPIToken, &bot.WebhookToken, &bot.CreatedAt, &bot.UpdatedAt)
+	err := row.Scan(&bot.BotID, &bot.Name, &bot.Icon, &bot.Color, &bot.SystemPrompt, &bot.Gateway, &bot.Model, &bot.Provider, &bot.ReasoningEffort, &disabledToolGroups, &bot.ZenAPIToken, &bot.WebhookToken, &bot.CreatedAt, &bot.UpdatedAt)
 	bot.DisabledToolGroups = parseToolGroups(disabledToolGroups)
 	return bot, err
 }
@@ -85,11 +86,11 @@ func GetBot(botID int) (Bot, error) {
 
 func CreateBot(bot Bot) (Bot, error) {
 	query := `
-		INSERT INTO bots (name, icon, color, system_prompt, gateway, model, provider)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO bots (name, icon, color, system_prompt, gateway, model, provider, reasoning_effort)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		RETURNING ` + botColumns
 
-	created, err := scanBot(sqlite.DB.QueryRow(query, bot.Name, bot.Icon, bot.Color, bot.SystemPrompt, bot.Gateway, bot.Model, bot.Provider))
+	created, err := scanBot(sqlite.DB.QueryRow(query, bot.Name, bot.Icon, bot.Color, bot.SystemPrompt, bot.Gateway, bot.Model, bot.Provider, bot.ReasoningEffort))
 	if err != nil {
 		return created, fmt.Errorf("error creating bot: %w", err)
 	}
@@ -100,11 +101,11 @@ func CreateBot(bot Bot) (Bot, error) {
 func UpdateBot(bot Bot) (Bot, error) {
 	query := `
 		UPDATE bots
-		SET name = ?, icon = ?, color = ?, system_prompt = ?, gateway = ?, model = ?, provider = ?, updated_at = CURRENT_TIMESTAMP
+		SET name = ?, icon = ?, color = ?, system_prompt = ?, gateway = ?, model = ?, provider = ?, reasoning_effort = ?, updated_at = CURRENT_TIMESTAMP
 		WHERE bot_id = ?
 		RETURNING ` + botColumns
 
-	updated, err := scanBot(sqlite.DB.QueryRow(query, bot.Name, bot.Icon, bot.Color, bot.SystemPrompt, bot.Gateway, bot.Model, bot.Provider, bot.BotID))
+	updated, err := scanBot(sqlite.DB.QueryRow(query, bot.Name, bot.Icon, bot.Color, bot.SystemPrompt, bot.Gateway, bot.Model, bot.Provider, bot.ReasoningEffort, bot.BotID))
 	if errors.Is(err, sql.ErrNoRows) {
 		return updated, fmt.Errorf("error updating bot %d: %w", bot.BotID, utils.ErrNotFound)
 	}

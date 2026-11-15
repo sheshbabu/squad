@@ -145,9 +145,25 @@ func decodeBot(w http.ResponseWriter, r *http.Request) (Bot, bool) {
 		return bot, false
 	}
 
-	if _, ok := llm.GetGateway(bot.Gateway); !ok {
+	gateway, ok := llm.GetGateway(bot.Gateway)
+	if !ok {
 		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_GATEWAY", fmt.Sprintf("Gateway %q is not configured", bot.Gateway), nil)
 		return bot, false
+	}
+
+	if bot.ReasoningEffort != "" {
+		models, err := gateway.ListModels(r.Context())
+		if err != nil {
+			utils.SendErrorResponse(w, http.StatusInternalServerError, "MODELS_READ_FAILED", "Failed to load models", err)
+			return bot, false
+		}
+		isSupported := slices.ContainsFunc(models, func(model llm.Model) bool {
+			return model.ModelID == bot.Model && slices.Contains(model.ReasoningEfforts, bot.ReasoningEffort)
+		})
+		if !isSupported {
+			utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_REASONING_EFFORT", "This model doesn't support that thinking level", nil)
+			return bot, false
+		}
 	}
 
 	if bot.Color == "" {

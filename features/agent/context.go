@@ -55,7 +55,7 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 		}
 	}
 
-	return llm.Request{Model: bot.Model, Provider: bot.Provider, User: GetGatewayUser(bot.BotID), Messages: llmMessages, Tools: tools.GetDefinitions(bot)}, nil
+	return llm.Request{Model: bot.Model, Provider: bot.Provider, ReasoningEffort: bot.ReasoningEffort, User: GetGatewayUser(bot.BotID), Messages: llmMessages, Tools: tools.GetDefinitions(bot)}, nil
 }
 
 func buildSystemPrompt(bot bots.Bot, thread threads.Thread, memoryList []memories.Memory, fileList []files.File) string {
