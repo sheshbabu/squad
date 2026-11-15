@@ -22,16 +22,17 @@ type Bot struct {
 	// Groups are stored as turned off rather than on, so every available tool starts enabled, including ones added later.
 	DisabledToolGroups []string  `json:"disabledToolGroups"`
 	ZenAPIToken        string    `json:"zenApiToken"`
+	WebhookToken       string    `json:"webhookToken"`
 	CreatedAt          time.Time `json:"createdAt"`
 	UpdatedAt          time.Time `json:"updatedAt"`
 }
 
-const botColumns = "bot_id, name, icon, color, system_prompt, gateway, model, provider, disabled_tool_groups, zen_api_token, created_at, updated_at"
+const botColumns = "bot_id, name, icon, color, system_prompt, gateway, model, provider, disabled_tool_groups, zen_api_token, webhook_token, created_at, updated_at"
 
 func scanBot(row interface{ Scan(...any) error }) (Bot, error) {
 	var bot Bot
 	var disabledToolGroups string
-	err := row.Scan(&bot.BotID, &bot.Name, &bot.Icon, &bot.Color, &bot.SystemPrompt, &bot.Gateway, &bot.Model, &bot.Provider, &disabledToolGroups, &bot.ZenAPIToken, &bot.CreatedAt, &bot.UpdatedAt)
+	err := row.Scan(&bot.BotID, &bot.Name, &bot.Icon, &bot.Color, &bot.SystemPrompt, &bot.Gateway, &bot.Model, &bot.Provider, &disabledToolGroups, &bot.ZenAPIToken, &bot.WebhookToken, &bot.CreatedAt, &bot.UpdatedAt)
 	bot.DisabledToolGroups = parseToolGroups(disabledToolGroups)
 	return bot, err
 }
@@ -130,6 +131,36 @@ func UpdateBotTools(botID int, disabledToolGroups []string, zenAPIToken string) 
 	}
 
 	return updated, nil
+}
+
+func UpdateBotWebhookToken(botID int, webhookToken string) (Bot, error) {
+	query := `
+		UPDATE bots
+		SET webhook_token = ?, updated_at = CURRENT_TIMESTAMP
+		WHERE bot_id = ?
+		RETURNING ` + botColumns
+
+	updated, err := scanBot(sqlite.DB.QueryRow(query, webhookToken, botID))
+	if errors.Is(err, sql.ErrNoRows) {
+		return updated, fmt.Errorf("error updating bot %d webhook: %w", botID, utils.ErrNotFound)
+	}
+	if err != nil {
+		return updated, fmt.Errorf("error updating bot %d webhook: %w", botID, err)
+	}
+
+	return updated, nil
+}
+
+func GetBotByWebhookToken(webhookToken string) (Bot, error) {
+	bot, err := scanBot(sqlite.DB.QueryRow("SELECT "+botColumns+" FROM bots WHERE webhook_token = ? AND webhook_token != ''", webhookToken))
+	if errors.Is(err, sql.ErrNoRows) {
+		return bot, fmt.Errorf("error getting bot by webhook token: %w", utils.ErrNotFound)
+	}
+	if err != nil {
+		return bot, fmt.Errorf("error getting bot by webhook token: %w", err)
+	}
+
+	return bot, nil
 }
 
 func DeleteBot(botID int) error {

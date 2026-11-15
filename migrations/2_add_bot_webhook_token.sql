@@ -1,0 +1,1 @@
+ALTER TABLE bots ADD COLUMN webhook_token TEXT NOT NULL DEFAULT '';

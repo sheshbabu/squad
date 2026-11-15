@@ -1,0 +1,29 @@
+.bot-webhook-pane {
+    .bot-webhook-pane-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2);
+    }
+
+    .bot-webhook-pane-url,
+    .bot-webhook-pane-example {
+        display: block;
+        margin: 0;
+        padding: var(--spacing-2);
+        border-radius: var(--radius-1);
+        background-color: var(--bg-secondary);
+        font: var(--xs-code);
+        word-break: break-all;
+        white-space: pre-wrap;
+    }
+
+    .bot-webhook-pane-example {
+        color: var(--text-secondary);
+    }
+
+    .bot-webhook-pane-actions {
+        display: flex;
+        gap: var(--spacing-2);
+        margin-top: var(--spacing-2);
+    }
+}

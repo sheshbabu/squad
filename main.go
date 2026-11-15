@@ -105,6 +105,9 @@ func newRouter() *http.ServeMux {
 	addSessionRoute(mux, "PUT /api/bots/{botId}/", bots.HandleUpdateBot)
 	addSessionRoute(mux, "DELETE /api/bots/{botId}/", bots.HandleDeleteBot)
 	addSessionRoute(mux, "PUT /api/bots/{botId}/tools/", bots.HandleUpdateBotTools)
+	addSessionRoute(mux, "PUT /api/bots/{botId}/webhook/", bots.HandleRegenerateBotWebhook)
+	addSessionRoute(mux, "DELETE /api/bots/{botId}/webhook/", bots.HandleDeleteBotWebhook)
+	addPublicRoute(mux, "POST /api/hooks/{token}/", threads.HandleReceiveWebhook)
 	addSessionRoute(mux, "GET /api/tools/", tools.HandleGetToolGroups)
 
 	addSessionRoute(mux, "GET /api/bots/{botId}/memories/", memories.HandleGetMemories)

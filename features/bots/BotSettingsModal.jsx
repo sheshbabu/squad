@@ -1,8 +1,9 @@
 import SidePaneModal from '../../commons/components/SidePaneModal.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
-import { SettingsIcon, BrainCircuitIcon, BotIcon, ClockIcon, ToolIcon } from '../../commons/components/Icon.jsx';
+import { SettingsIcon, BrainCircuitIcon, BotIcon, ClockIcon, ToolIcon, WebhookIcon } from '../../commons/components/Icon.jsx';
 import BotForm from './BotForm.jsx';
 import BotToolsPane from './BotToolsPane.jsx';
+import BotWebhookPane from './BotWebhookPane.jsx';
 import MemoriesPane from '../memories/MemoriesPane.jsx';
 import SchedulesPane from '../schedules/SchedulesPane.jsx';
 
@@ -27,6 +28,7 @@ export default function BotSettingsModal({ bot, onSaved, onDeleted }) {
       { id: "general", label: "General", icon: <SettingsIcon />, content: <BotForm bot={currentBot} sections={["profile"]} onSaved={handleSaved} onDeleted={onDeleted} /> },
       { id: "model", label: "Model", icon: <BotIcon />, content: <BotForm bot={currentBot} sections={["model"]} onSaved={handleSaved} /> },
       { id: "tools", label: "Tools", icon: <ToolIcon />, content: <BotToolsPane bot={currentBot} onSaved={handleSaved} /> },
+      { id: "webhook", label: "Webhook", icon: <WebhookIcon />, content: <BotWebhookPane bot={currentBot} onSaved={handleSaved} /> },
     ],
     [
       {

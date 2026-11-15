@@ -1,6 +1,8 @@
 package bots
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -157,4 +159,42 @@ func decodeBot(w http.ResponseWriter, r *http.Request) (Bot, bool) {
 	}
 
 	return bot, true
+}
+
+func HandleRegenerateBotWebhook(w http.ResponseWriter, r *http.Request) {
+	botID, err := strconv.Atoi(r.PathValue("botId"))
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+		return
+	}
+
+	tokenBytes := make([]byte, 24)
+	if _, err := rand.Read(tokenBytes); err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "WEBHOOK_UPDATE_FAILED", "Failed to create webhook", err)
+		return
+	}
+
+	updated, err := UpdateBotWebhookToken(botID, hex.EncodeToString(tokenBytes))
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "WEBHOOK_UPDATE_FAILED", "Failed to create webhook", err)
+		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, updated)
+}
+
+func HandleDeleteBotWebhook(w http.ResponseWriter, r *http.Request) {
+	botID, err := strconv.Atoi(r.PathValue("botId"))
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+		return
+	}
+
+	updated, err := UpdateBotWebhookToken(botID, "")
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "WEBHOOK_UPDATE_FAILED", "Failed to turn off webhook", err)
+		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, updated)
 }

@@ -4,7 +4,7 @@ import isMobile from '../../commons/utils/isMobile.js';
 import { isModalOpen } from '../../commons/components/Modal.jsx';
 import './Composer.css';
 
-const { useState, useRef, useEffect } = React;
+const { useState, useRef, useEffect, useLayoutEffect } = React;
 
 const ACCEPTED_TYPES_BY_MODALITY = {
   image: ["image/png", "image/jpeg", "image/webp", "image/gif"],
@@ -19,6 +19,12 @@ export default function Composer({ botId, inputModalities, isNewChat, isWorking,
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
   const wasWorkingRef = useRef(isWorking);
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [content]);
 
   useEffect(() => {
     if (isNewChat) {

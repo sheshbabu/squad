@@ -121,6 +121,14 @@ function updateBotTools(botId, payload) {
   return request('PUT', `/api/bots/${botId}/tools/`, payload);
 }
 
+function regenerateBotWebhook(botId) {
+  return request('PUT', `/api/bots/${botId}/webhook/`);
+}
+
+function deleteBotWebhook(botId) {
+  return request('DELETE', `/api/bots/${botId}/webhook/`);
+}
+
 function getToolGroups() {
   return request('GET', '/api/tools/');
 }
@@ -240,6 +248,8 @@ export default {
   updateBot,
   deleteBot,
   updateBotTools,
+  regenerateBotWebhook,
+  deleteBotWebhook,
   getToolGroups,
   getMemories,
   deleteMemory,
