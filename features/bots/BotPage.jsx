@@ -129,6 +129,11 @@ function BotPageContent({ botId, threadId, fileName }) {
     }
   }
 
+  let mobileNavbar = null;
+  if (!hasDetail) {
+    mobileNavbar = <MobileNavbar currentBotId={botId} />;
+  }
+
   let pageClassName = "page-container";
   if (isChatExpanded && !isFilesView) {
     pageClassName += " is-chat-expanded";
@@ -153,7 +158,7 @@ function BotPageContent({ botId, threadId, fileName }) {
         {detailContent}
       </div>
 
-      <MobileNavbar currentBotId={botId} />
+      {mobileNavbar}
     </div>
   );
 }

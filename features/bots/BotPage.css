@@ -55,13 +55,9 @@
 }
 
 @media screen and (max-width: 948px) {
-    .bot-page-list,
-    .bot-page-detail {
-        height: calc(100% - (var(--mobile-navbar-height) + var(--safe-area-bottom)));
-    }
-
     .bot-page-list {
         width: 100%;
+        height: calc(100% - (var(--mobile-navbar-height) + var(--safe-area-bottom)));
 
         &.has-detail {
             display: none;
@@ -69,6 +65,7 @@
     }
 
     .bot-page-detail {
+        height: calc(100% - var(--safe-area-bottom));
         border-left: none;
 
         &:not(.has-detail) {
