@@ -1,6 +1,20 @@
 import './Input.css';
 
+const { useRef, useLayoutEffect } = React;
+
 export default function Input({ id, label = "", type = "text", placeholder, value, hint = "", error = "", isDisabled, onChange, rows = 4, list }) {
+  const textareaRef = useRef(null);
+
+  // Safari and Firefox don't support field-sizing, so the textarea grows to fit its content here instead.
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea === null) {
+      return;
+    }
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight + textarea.offsetHeight - textarea.clientHeight}px`;
+  }, [value]);
+
   let hintElement = null;
   if (hint !== "") {
     hintElement = <div className="hint">{hint}</div>;
@@ -21,7 +35,7 @@ export default function Input({ id, label = "", type = "text", placeholder, valu
   );
   if (type === "textarea") {
     inputElement = (
-      <textarea id={id} name={id} placeholder={placeholder} className={error !== "" ? "has-error" : ""} disabled={isDisabled} value={value || ""} onChange={onChange} rows={rows} />
+      <textarea ref={textareaRef} id={id} name={id} placeholder={placeholder} className={error !== "" ? "has-error" : ""} disabled={isDisabled} value={value || ""} onChange={onChange} rows={rows} />
     );
   }
 

@@ -14,7 +14,6 @@
     .input-container textarea {
         height: auto;
         min-height: 120px;
-        font: var(--p1);
     }
 
     .form-field-container:first-child {
