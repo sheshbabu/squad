@@ -1,6 +1,6 @@
 import SidePaneModal from '../../commons/components/SidePaneModal.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
-import { SettingsIcon, BrainCircuitIcon, BotIcon, ClockIcon, ToolIcon, WebhookIcon } from '../../commons/components/Icon.jsx';
+import { SettingsIcon, DatabaseIcon, BotIcon, ClockIcon, ToolIcon, WebhookIcon } from '../../commons/components/Icon.jsx';
 import BotForm from './BotForm.jsx';
 import BotToolsPane from './BotToolsPane.jsx';
 import BotWebhookPane from './BotWebhookPane.jsx';
@@ -34,7 +34,7 @@ export default function BotSettingsModal({ bot, onSaved, onDeleted }) {
       {
         id: "memories",
         label: "Memories",
-        icon: <BrainCircuitIcon />,
+        icon: <DatabaseIcon />,
         content: (
           <div className="settings-pane">
             <SettingsSection title="Memories" description="Facts the bot saved to remember across chats.">

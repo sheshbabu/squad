@@ -6,6 +6,7 @@ svg.lucide.bot-avatar {
     line,
     circle,
     rect,
+    ellipse,
     path {
         stroke: currentColor;
     }

@@ -4,18 +4,19 @@ import Toggle from '../../commons/components/Toggle.jsx';
 import Input from '../../commons/components/Input.jsx';
 import Button from '../../commons/components/Button.jsx';
 import { showToast } from '../../commons/components/Toast.jsx';
-import { BrainCircuitIcon, FileIcon, LinkIcon, ChatIcon, NoteIcon } from '../../commons/components/Icon.jsx';
+import { DatabaseIcon, FileIcon, HistoryIcon, GlobeIcon, NewspaperIcon, NotepadIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 
 const { useState, useEffect } = React;
 
 const GROUP_ICONS = {
-  memory: <BrainCircuitIcon />,
+  memory: <DatabaseIcon />,
   files: <FileIcon />,
-  web: <LinkIcon />,
-  hackernews: <ChatIcon />,
-  reddit: <ChatIcon />,
-  zen: <NoteIcon />,
+  chats: <HistoryIcon />,
+  web: <GlobeIcon />,
+  hackernews: <NewspaperIcon />,
+  reddit: <NewspaperIcon />,
+  zen: <NotepadIcon />,
 };
 
 export default function BotToolsPane({ bot, onSaved }) {

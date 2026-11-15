@@ -75,6 +75,7 @@
             line,
             circle,
             rect,
+            ellipse,
             path {
                 stroke: var(--neutral-500);
             }
@@ -87,6 +88,7 @@
                 line,
                 circle,
                 rect,
+                ellipse,
                 path {
                     stroke: var(--neutral-900);
                 }

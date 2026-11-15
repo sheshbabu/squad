@@ -41,6 +41,7 @@
                 line,
                 circle,
                 rect,
+                ellipse,
                 path {
                     stroke-width: 2.5;
                     stroke: var(--neutral-100);
@@ -54,6 +55,7 @@
                     line,
                     circle,
                     rect,
+                    ellipse,
                     path {
                         stroke: var(--neutral-900);
                     }
