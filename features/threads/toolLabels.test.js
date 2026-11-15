@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { getRunningLabel, getSummaryLabel } from './toolLabels.js';
+import { getRunningLabel, getDoneLabel, getSummaryLabel } from './toolLabels.js';
 
 function toolCall(name, args) {
   return { function: { name, arguments: JSON.stringify(args) } };
@@ -15,6 +15,12 @@ test('running labels describe the call', () => {
 test('unknown tools and broken arguments still get a label', () => {
   assert.equal(getRunningLabel(toolCall('new_tool', {})), 'Using new tool');
   assert.equal(getRunningLabel({ function: { name: 'fetch_url', arguments: '{' } }), 'Reading a page');
+});
+
+test('done labels split the action from its detail', () => {
+  assert.deepEqual(getDoneLabel(toolCall('web_search', { query: 'gold rate' })), { label: 'Searched the web', detail: 'gold rate' });
+  assert.deepEqual(getDoneLabel(toolCall('list_files', {})), { label: 'Listed files', detail: '' });
+  assert.deepEqual(getDoneLabel(toolCall('new_tool', {})), { label: 'Used new tool', detail: '' });
 });
 
 test('summaries count the calls', () => {

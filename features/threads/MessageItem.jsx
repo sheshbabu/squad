@@ -1,8 +1,8 @@
 import Markdown from '../../commons/components/Markdown.jsx';
-import { ToolIcon, FileIcon, CopyIcon, CheckIcon, ChevronRightIcon } from '../../commons/components/Icon.jsx';
+import { FileIcon, CopyIcon, CheckIcon, ChevronRightIcon } from '../../commons/components/Icon.jsx';
 import { showToast } from '../../commons/components/Toast.jsx';
 import formatDate from '../../commons/utils/formatDate.js';
-import { getSummaryLabel } from './toolLabels.js';
+import { getSummaryLabel, getDoneLabel } from './toolLabels.js';
 import './MessageItem.css';
 
 const { useState } = React;
@@ -148,12 +148,14 @@ function ToolCall({ toolCall, result }) {
     );
   }
 
+  const { label, detail } = getDoneLabel(toolCall);
+
   return (
-    <div className="message-item-tool">
+    <div className={`message-item-tool ${isExpanded ? "is-expanded" : ""}`}>
       <div className="message-item-tool-summary" onClick={handleToggleClick}>
-        <ToolIcon />
-        <span className="message-item-tool-name">{toolCall.function.name}</span>
-        <span className="message-item-tool-argument">{getArgumentSummary(toolCall.function.arguments)}</span>
+        <span className="message-item-tool-label">{label}</span>
+        <span className="message-item-tool-detail">{detail}</span>
+        <ChevronRightIcon />
       </div>
       {detailsElement}
     </div>
@@ -177,18 +179,6 @@ function Attachment({ attachment }) {
       {attachment.filename}
     </a>
   );
-}
-
-function getArgumentSummary(argumentsText) {
-  try {
-    const values = Object.values(JSON.parse(argumentsText)).filter(value => typeof value === "string");
-    if (values.length > 0) {
-      return values[0];
-    }
-  } catch (error) {
-    // Arguments that aren't valid JSON are shown as they are.
-  }
-  return argumentsText;
 }
 
 function formatArguments(argumentsText) {
