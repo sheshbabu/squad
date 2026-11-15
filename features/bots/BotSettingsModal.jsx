@@ -1,11 +1,12 @@
 import SidePaneModal from '../../commons/components/SidePaneModal.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
-import { SettingsIcon, DatabaseIcon, BotIcon, ClockIcon, ToolIcon, WebhookIcon } from '../../commons/components/Icon.jsx';
+import { SettingsIcon, DatabaseIcon, BotIcon, ClockIcon, ToolIcon, WebhookIcon, CoinsIcon } from '../../commons/components/Icon.jsx';
 import BotForm from './BotForm.jsx';
 import BotToolsPane from './BotToolsPane.jsx';
 import BotWebhookPane from './BotWebhookPane.jsx';
 import MemoriesPane from '../memories/MemoriesPane.jsx';
 import SchedulesPane from '../schedules/SchedulesPane.jsx';
+import CostPane from '../usage/CostPane.jsx';
 
 const { useState } = React;
 
@@ -55,6 +56,7 @@ export default function BotSettingsModal({ bot, onSaved, onDeleted }) {
           </div>
         )
       },
+      { id: "cost", label: "Cost", icon: <CoinsIcon />, content: <CostPane botId={currentBot.botId} /> },
     ],
   ];
 

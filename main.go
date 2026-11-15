@@ -23,6 +23,7 @@ import (
 	"squad/features/search"
 	"squad/features/threads"
 	"squad/features/tools"
+	"squad/features/usage"
 	"squad/features/users"
 	"syscall"
 	"time"
@@ -112,6 +113,8 @@ func newRouter() *http.ServeMux {
 
 	addSessionRoute(mux, "GET /api/bots/{botId}/memories/", memories.HandleGetMemories)
 	addSessionRoute(mux, "DELETE /api/bots/{botId}/memories/{memoryId}/", memories.HandleDeleteMemory)
+
+	addSessionRoute(mux, "GET /api/bots/{botId}/cost/", usage.HandleGetBotCost)
 
 	addSessionRoute(mux, "GET /api/bots/{botId}/files/", files.HandleGetFiles)
 	addSessionRoute(mux, "GET /api/bots/{botId}/files/{name}/", files.HandleGetFile)

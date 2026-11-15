@@ -1,0 +1,132 @@
+.cost-pane {
+    --cost-chat-color: var(--yellow-500);
+    --cost-scheduled-color: rgb(from var(--yellow-500) r g b / 0.4);
+
+    .cost-pane-empty {
+        margin-top: var(--spacing-4);
+        font: var(--sm);
+        color: var(--text-secondary);
+    }
+
+    .cost-pane-stats {
+        display: flex;
+        gap: var(--spacing-8);
+        margin-top: var(--spacing-4);
+
+        .cost-pane-stat-value {
+            font: var(--h6);
+        }
+
+        .cost-pane-stat-label {
+            font: var(--xs);
+            color: var(--text-secondary);
+        }
+    }
+
+    .cost-pane-chart {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-1);
+        margin-top: var(--spacing-4);
+        font: var(--xs);
+        color: var(--text-secondary);
+
+        .cost-pane-bars {
+            display: flex;
+            align-items: stretch;
+            gap: 2px;
+            height: 160px;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .cost-pane-axis {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cost-pane-legend {
+            display: flex;
+            gap: var(--spacing-4);
+            margin-top: var(--spacing-1);
+        }
+    }
+
+    .cost-pane-bar {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 2px;
+
+        &:hover .cost-pane-bar-segment {
+            filter: brightness(0.9);
+        }
+
+        .cost-pane-bar-segment {
+            &:first-child {
+                border-radius: 4px 4px 0 0;
+            }
+
+            &.is-chat {
+                background-color: var(--cost-chat-color);
+            }
+
+            &.is-scheduled {
+                background-color: var(--cost-scheduled-color);
+            }
+        }
+    }
+
+    .cost-pane-legend-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-1);
+
+        .cost-pane-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+
+            &.is-chat {
+                background-color: var(--cost-chat-color);
+            }
+
+            &.is-scheduled {
+                background-color: var(--cost-scheduled-color);
+            }
+        }
+    }
+
+    .cost-pane-rows {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cost-pane-row {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--spacing-4);
+        padding: var(--spacing-2) 0;
+        border-bottom: 1px solid var(--neutral-100);
+        font: var(--sm);
+        color: var(--text-primary);
+        text-decoration: none;
+
+        &:is(a):hover .cost-pane-row-name {
+            text-decoration: underline;
+        }
+
+        .cost-pane-row-name {
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .cost-pane-row-cost {
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+}

@@ -133,6 +133,12 @@ function getToolGroups() {
   return request('GET', '/api/tools/');
 }
 
+// Cost
+
+function getBotCost(botId, range) {
+  return request('GET', `/api/bots/${botId}/cost/?range=${range}`);
+}
+
 // Memories
 
 function getMemories(botId) {
@@ -251,6 +257,7 @@ export default {
   regenerateBotWebhook,
   deleteBotWebhook,
   getToolGroups,
+  getBotCost,
   getMemories,
   deleteMemory,
   getFiles,
