@@ -121,3 +121,20 @@
         }
     }
 }
+
+@media screen and (max-width: 948px) {
+    .thread-menu {
+        .thread-menu-trigger {
+            cursor: default;
+            pointer-events: none;
+
+            svg.lucide {
+                display: none;
+            }
+        }
+
+        .thread-menu-dropdown {
+            display: none;
+        }
+    }
+}
