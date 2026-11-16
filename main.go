@@ -95,6 +95,7 @@ func newRouter() *http.ServeMux {
 	addPublicRoute(mux, "POST /api/users/", users.HandleCreateUser)
 	addSessionRoute(mux, "POST /api/users/logout/", users.HandleLogout)
 	addSessionRoute(mux, "PUT /api/users/me/password/", users.HandleUpdatePassword)
+	addSessionRoute(mux, "PUT /api/users/me/about/", users.HandleUpdateAboutMe)
 
 	addSessionRoute(mux, "GET /api/gateways/", gateways.HandleGetGateways)
 	addSessionRoute(mux, "GET /api/gateways/{gateway}/models/", gateways.HandleGetModels)

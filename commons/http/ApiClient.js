@@ -81,6 +81,10 @@ function updatePassword(payload) {
   return request('PUT', '/api/users/me/password/', payload);
 }
 
+function updateAboutMe(payload) {
+  return request('PUT', '/api/users/me/about/', payload);
+}
+
 // Gateways
 
 function getGateways() {
@@ -245,6 +249,7 @@ export default {
   login,
   logout,
   updatePassword,
+  updateAboutMe,
   getGateways,
   getModels,
   getProviders,

@@ -9,8 +9,9 @@ import (
 )
 
 type User struct {
-	UserID int    `json:"userId"`
-	Email  string `json:"email"`
+	UserID  int    `json:"userId"`
+	Email   string `json:"email"`
+	AboutMe string `json:"aboutMe"`
 }
 
 type UserRecord struct {
@@ -48,9 +49,9 @@ func GetUserByEmail(email string) (UserRecord, error) {
 func GetUserByID(userID int) (User, error) {
 	var user User
 
-	query := "SELECT user_id, email FROM users WHERE user_id = ?"
+	query := "SELECT user_id, email, about_me FROM users WHERE user_id = ?"
 
-	err := sqlite.DB.QueryRow(query, userID).Scan(&user.UserID, &user.Email)
+	err := sqlite.DB.QueryRow(query, userID).Scan(&user.UserID, &user.Email, &user.AboutMe)
 	if errors.Is(err, sql.ErrNoRows) {
 		return user, fmt.Errorf("error retrieving user: %w", utils.ErrNotFound)
 	}
@@ -105,4 +106,36 @@ func UpdatePassword(userID int, passwordHash string) error {
 	}
 
 	return nil
+}
+
+func UpdateAboutMe(userID int, aboutMe string) error {
+	result, err := sqlite.DB.Exec("UPDATE users SET about_me = ? WHERE user_id = ?", aboutMe, userID)
+	if err != nil {
+		return fmt.Errorf("error updating about me: %w", err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error checking updated about me: %w", err)
+	}
+	if count == 0 {
+		return fmt.Errorf("error updating about me: %w", utils.ErrNotFound)
+	}
+
+	return nil
+}
+
+// GetAboutMe reads the only user's profile, since scheduled runs and webhooks have no session to identify them.
+func GetAboutMe() (string, error) {
+	var aboutMe string
+
+	err := sqlite.DB.QueryRow("SELECT about_me FROM users ORDER BY user_id LIMIT 1").Scan(&aboutMe)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("error retrieving about me: %w", err)
+	}
+
+	return aboutMe, nil
 }

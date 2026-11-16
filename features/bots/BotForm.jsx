@@ -4,6 +4,8 @@ import { showToast } from '../../commons/components/Toast.jsx';
 import Input from '../../commons/components/Input.jsx';
 import Button from '../../commons/components/Button.jsx';
 import Dropdown from '../../commons/components/Dropdown.jsx';
+import SettingsRow from '../../commons/components/SettingsRow.jsx';
+import Toggle from '../../commons/components/Toggle.jsx';
 import BotAvatar, { BOT_ICONS, DEFAULT_BOT_ICON } from '../../commons/components/BotAvatar.jsx';
 import { CheckIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
@@ -36,6 +38,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
   const [model, setModel] = useState(bot?.model ?? "");
   const [provider, setProvider] = useState(bot?.provider ?? "");
   const [reasoningEffort, setReasoningEffort] = useState(bot?.reasoningEffort ?? "");
+  const [usesAboutMe, setUsesAboutMe] = useState(bot?.usesAboutMe ?? true);
   const [gateways, setGateways] = useState([]);
   const [models, setModels] = useState([]);
   const [providers, setProviders] = useState([]);
@@ -72,7 +75,7 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
     event.preventDefault();
     setIsSaving(true);
 
-    const payload = { name, color, icon, systemPrompt, gateway, model, provider, reasoningEffort };
+    const payload = { name, color, icon, systemPrompt, gateway, model, provider, reasoningEffort, usesAboutMe };
     const promise = bot === undefined ? ApiClient.createBot(payload) : ApiClient.updateBot(bot.botId, payload);
 
     // A new bot closes the modal and opens its chat, while an edit keeps the settings open like Zen's.
@@ -170,6 +173,12 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
         </div>
 
         <Input id="bot-system-prompt" label="Instructions" type="textarea" hint="Who the bot is and how it should behave." value={systemPrompt} onChange={event => setSystemPrompt(event.target.value)} />
+
+        <div className="settings-card bot-form-about-me">
+          <SettingsRow label="Use About me" description="Adds your About me from Settings to this bot's instructions.">
+            <Toggle isEnabled={usesAboutMe} onChange={setUsesAboutMe} />
+          </SettingsRow>
+        </div>
       </SettingsSection>
     );
   }

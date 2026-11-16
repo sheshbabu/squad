@@ -10,7 +10,10 @@ import (
 	"squad/commons/session"
 	"squad/commons/utils"
 	"strings"
+	"unicode/utf8"
 )
+
+const maxAboutMeLength = 2000
 
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -20,6 +23,10 @@ type LoginRequest struct {
 type CreateUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type UpdateAboutMeRequest struct {
+	AboutMe string `json:"aboutMe"`
 }
 
 type UpdatePasswordRequest struct {
@@ -183,6 +190,39 @@ func HandleUpdatePassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func HandleUpdateAboutMe(w http.ResponseWriter, r *http.Request) {
+	var payload UpdateAboutMeRequest
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_REQUEST_BODY", "Invalid request data", nil)
+		return
+	}
+
+	userID, isValid := auth.GetSessionUserID(r)
+	if !isValid {
+		utils.SendErrorResponse(w, http.StatusUnauthorized, "NO_SESSION", "Session not found", nil)
+		return
+	}
+
+	aboutMe := strings.TrimSpace(payload.AboutMe)
+	if utf8.RuneCountInString(aboutMe) > maxAboutMeLength {
+		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_ABOUT_ME", fmt.Sprintf("About me can be up to %d characters", maxAboutMeLength), nil)
+		return
+	}
+
+	if err := UpdateAboutMe(userID, aboutMe); err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "ABOUT_ME_UPDATE_FAILED", "Failed to save about me", err)
+		return
+	}
+
+	user, err := GetUserByID(userID)
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "USER_READ_FAILED", "Failed to read user", err)
+		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, user)
 }
 
 func HandleLogout(w http.ResponseWriter, r *http.Request) {

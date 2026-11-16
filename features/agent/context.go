@@ -11,6 +11,7 @@ import (
 	"squad/features/memories"
 	"squad/features/threads"
 	"squad/features/tools"
+	"squad/features/users"
 	"strings"
 	"time"
 )
@@ -28,7 +29,15 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 		return llm.Request{}, err
 	}
 
-	llmMessages := []llm.Message{{Role: "system", Content: buildSystemPrompt(bot, thread, memoryList, fileList)}}
+	aboutMe := ""
+	if bot.UsesAboutMe {
+		aboutMe, err = users.GetAboutMe()
+		if err != nil {
+			return llm.Request{}, err
+		}
+	}
+
+	llmMessages := []llm.Message{{Role: "system", Content: buildSystemPrompt(bot, thread, aboutMe, memoryList, fileList)}}
 
 	currentTurnStart := 0
 	for i, message := range messages {
@@ -58,7 +67,7 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 	return llm.Request{Model: bot.Model, Provider: bot.Provider, ReasoningEffort: bot.ReasoningEffort, User: GetGatewayUser(bot.BotID), Messages: llmMessages, Tools: tools.GetDefinitions(bot)}, nil
 }
 
-func buildSystemPrompt(bot bots.Bot, thread threads.Thread, memoryList []memories.Memory, fileList []files.File) string {
+func buildSystemPrompt(bot bots.Bot, thread threads.Thread, aboutMe string, memoryList []memories.Memory, fileList []files.File) string {
 	sections := []string{}
 
 	if strings.TrimSpace(bot.SystemPrompt) != "" {
@@ -69,6 +78,10 @@ func buildSystemPrompt(bot bots.Bot, thread threads.Thread, memoryList []memorie
 
 	if thread.ScheduleID != nil {
 		sections = append(sections, "This chat was started automatically by a schedule the user set up, so carry out the first message's task without asking follow-up questions.")
+	}
+
+	if aboutMe != "" {
+		sections = append(sections, "About the user, written by them and shared with all their bots:\n"+aboutMe)
 	}
 
 	memoryLines := []string{"Memories you saved earlier (manage them with save_memory and delete_memory):"}

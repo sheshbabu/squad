@@ -4,8 +4,9 @@ import SettingsRow from '../../commons/components/SettingsRow.jsx';
 import BotAvatar from '../../commons/components/BotAvatar.jsx';
 import Button from '../../commons/components/Button.jsx';
 import { openModal } from '../../commons/components/Modal.jsx';
-import { BotIcon, NewIcon, ThemeIcon, SecurityIcon } from '../../commons/components/Icon.jsx';
+import { BotIcon, NewIcon, ThemeIcon, SecurityIcon, UserIcon } from '../../commons/components/Icon.jsx';
 import BotSettingsModal from '../bots/BotSettingsModal.jsx';
+import AboutMePane from './AboutMePane.jsx';
 import AppearancePane from './AppearancePane.jsx';
 import SecurityPane from './SecurityPane.jsx';
 import './SettingsModal.css';
@@ -15,6 +16,7 @@ export default function SettingsModal({ bots, onBotCreated, onBotSaved, onBotDel
   const tabGroups = [
     [
       { id: "bots", label: "Bots", icon: <BotIcon />, content: <BotsPane bots={bots} onBotCreated={onBotCreated} onBotSaved={onBotSaved} onBotDeleted={onBotDeleted} /> },
+      { id: "about", label: "About me", icon: <UserIcon />, content: <AboutMePane /> },
       { id: "appearance", label: "Appearance", icon: <ThemeIcon />, content: <AppearancePane /> },
     ],
     [

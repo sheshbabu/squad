@@ -261,3 +261,26 @@ func TestBuildRequestClearsToolResultsFromEarlierTurns(t *testing.T) {
 		t.Fatalf("expected only the earlier turn's result to be cleared, got %q", toolContents)
 	}
 }
+
+func TestBuildRequestAddsAboutMeOnlyForBotsThatUseIt(t *testing.T) {
+	testutil.SetupDB(t)
+
+	sqlite.DB.Exec("INSERT INTO users (email, password_hash, about_me) VALUES ('me@example.com', 'hash', 'I live in Singapore.')")
+
+	for _, usesAboutMe := range []bool{true, false} {
+		bot, err := bots.CreateBot(bots.Bot{Name: "Helper", Color: "gray", Gateway: "fake", Model: "fake-model", UsesAboutMe: usesAboutMe})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		request, err := buildRequest(bot, threads.Thread{}, []threads.Message{{Role: threads.ROLE_USER, Content: "Hi"}})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		systemPrompt := request.Messages[0].Content.(string)
+		if strings.Contains(systemPrompt, "I live in Singapore.") != usesAboutMe {
+			t.Errorf("usesAboutMe %v: unexpected system prompt %q", usesAboutMe, systemPrompt)
+		}
+	}
+}
