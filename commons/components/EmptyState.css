@@ -9,6 +9,7 @@
 
     .empty-state-icon {
         margin-bottom: var(--spacing-3);
+        color: var(--neutral-400);
 
         svg {
             width: 48px;
@@ -19,7 +20,7 @@
             rect,
             ellipse,
             path {
-                stroke: var(--neutral-400);
+                stroke: currentColor;
             }
         }
     }

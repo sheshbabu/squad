@@ -1,4 +1,4 @@
-import { showToast } from "../components/Toast.jsx";
+import showToast from "../components/Toast.jsx";
 
 async function request(method, url, payload) {
   const options = {
@@ -40,7 +40,7 @@ async function request(method, url, payload) {
         body = await error.json();
       }
 
-      const err = new Error(body?.message || error.statusText);
+      const err = new Error(body?.message ?? error.statusText);
       err.code = body?.code;
       err.status = error.status;
 
@@ -49,7 +49,7 @@ async function request(method, url, payload) {
       if (err.code === 'NO_SESSION' && url !== '/api/users/me/') {
         window.location.reload();
       } else if (!skipCodes.includes(err.code)) {
-        showToast(err.message || 'An unexpected error occurred');
+        showToast(err.message === '' ? 'An unexpected error occurred' : err.message);
       }
 
       throw err;

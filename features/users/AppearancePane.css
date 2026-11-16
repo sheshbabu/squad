@@ -1,76 +1,75 @@
-.theme-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: var(--spacing-4);
+.appearance-pane {
+    .appearance-pane-themes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: var(--spacing-4);
 
-    .theme-option {
-        cursor: pointer;
-        border: 2px solid transparent;
-        border-radius: var(--radius-2);
-        padding: var(--spacing-3);
-        transition: border-color var(--transition-fast) ease, background-color var(--transition-fast) ease;
+        .appearance-pane-theme {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: var(--radius-2);
+            padding: var(--spacing-3);
+            transition: border-color var(--transition-fast) ease, background-color var(--transition-fast) ease;
 
-        &:hover {
-            background-color: var(--neutral-50);
-        }
-
-        &:active {
-            transform: scale(0.98);
-            transition: transform var(--transition-fast) ease-out;
-        }
-
-        &.is-selected {
-            border-color: var(--blue-500);
-            background-color: rgb(from var(--blue-500) r g b / 0.08);
-
-            .theme-info .theme-name {
-                color: var(--blue-600);
-            }
-        }
-
-        .theme-preview {
-            position: relative;
-            width: 100%;
-            height: auto;
-            overflow: hidden;
-            margin-bottom: var(--spacing-4);
-            background: var(--bg-primary);
-            box-shadow: var(--shadow-2);
-
-            svg {
-                width: 100%;
-                height: auto;
-                display: block;
+            &:hover {
+                background-color: var(--neutral-50);
             }
 
-            .system-theme-preview {
-                display: flex;
-                position: relative;
+            &:active {
+                transform: scale(0.98);
+                transition: transform var(--transition-fast) ease-out;
+            }
 
-                .system-theme-half {
-                    flex: 1;
-                    overflow: hidden;
+            &.is-selected {
+                border-color: var(--blue-500);
+                background-color: rgb(from var(--blue-500) r g b / 0.08);
 
-                    &:first-child {
-                        clip-path: polygon(0 0, 100% 0, 0 100%);
-                    }
-
-                    &:last-child {
-                        margin-left: -100%;
-                        clip-path: polygon(100% 0, 100% 0, 100% 100%, 0 100%);
-                    }
+                .appearance-pane-theme-name {
+                    color: var(--blue-600);
                 }
             }
-        }
 
-        .theme-info {
-            text-align: center;
+            .appearance-pane-theme-preview {
+                position: relative;
+                width: 100%;
+                height: auto;
+                overflow: hidden;
+                margin-bottom: var(--spacing-4);
+                background: var(--bg-primary);
+                box-shadow: var(--shadow-2);
 
-            .theme-name {
+                svg {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                }
+            }
+
+            .appearance-pane-theme-name {
                 font: var(--sm);
                 font-weight: 600;
+                text-align: center;
                 color: var(--text-primary);
             }
+        }
+    }
+}
+
+.appearance-pane-system-preview {
+    display: flex;
+    position: relative;
+
+    .appearance-pane-system-preview-half {
+        flex: 1;
+        overflow: hidden;
+
+        &:first-child {
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        &:last-child {
+            margin-left: -100%;
+            clip-path: polygon(100% 0, 100% 0, 100% 100%, 0 100%);
         }
     }
 }

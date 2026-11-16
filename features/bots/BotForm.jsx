@@ -1,6 +1,6 @@
 import { closeModal } from '../../commons/components/Modal.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
-import { showToast } from '../../commons/components/Toast.jsx';
+import showToast from '../../commons/components/Toast.jsx';
 import Input from '../../commons/components/Input.jsx';
 import Button from '../../commons/components/Button.jsx';
 import Dropdown from '../../commons/components/Dropdown.jsx';

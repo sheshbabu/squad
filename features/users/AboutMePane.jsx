@@ -2,7 +2,7 @@ import Button from '../../commons/components/Button.jsx';
 import Input from '../../commons/components/Input.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
 import Spinner from '../../commons/components/Spinner.jsx';
-import { showToast } from '../../commons/components/Toast.jsx';
+import showToast from '../../commons/components/Toast.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 
 const { useState, useEffect } = React;

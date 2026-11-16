@@ -16,7 +16,7 @@ type ErrorResponse struct {
 
 func SendErrorResponse(w http.ResponseWriter, statusCode int, code string, message string, err error) {
 	if err != nil {
-		slog.Error(err.Error())
+		slog.Error("error handling request", "code", code, "error", err)
 	}
 
 	if errors.Is(err, ErrNotFound) {

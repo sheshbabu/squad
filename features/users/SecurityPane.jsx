@@ -2,7 +2,7 @@ import Button from '../../commons/components/Button.jsx';
 import Input from '../../commons/components/Input.jsx';
 import SettingsRow from '../../commons/components/SettingsRow.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
-import { showToast } from '../../commons/components/Toast.jsx';
+import showToast from '../../commons/components/Toast.jsx';
 import { LogOutIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 

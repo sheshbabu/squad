@@ -48,7 +48,7 @@ function BotsPane({ bots, onBotCreated, onBotSaved, onBotDeleted }) {
   }
 
   return (
-    <div className="settings-pane">
+    <div className="settings-pane settings-modal">
       <SettingsSection title="Bots" description="Each bot has its own model, memories, files and schedules.">
         {card}
         <div className="settings-form">

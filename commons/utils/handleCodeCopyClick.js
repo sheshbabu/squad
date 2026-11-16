@@ -1,4 +1,4 @@
-import { showToast } from "../components/Toast.jsx";
+import showToast from "../components/Toast.jsx";
 
 const COPIED_DURATION = 2000;
 

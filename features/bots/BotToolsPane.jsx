@@ -3,7 +3,7 @@ import SettingsRow from '../../commons/components/SettingsRow.jsx';
 import Toggle from '../../commons/components/Toggle.jsx';
 import Input from '../../commons/components/Input.jsx';
 import Button from '../../commons/components/Button.jsx';
-import { showToast } from '../../commons/components/Toast.jsx';
+import showToast from '../../commons/components/Toast.jsx';
 import { DatabaseIcon, FileIcon, HistoryIcon, GlobeIcon, NewspaperIcon, NotepadIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 

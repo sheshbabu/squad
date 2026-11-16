@@ -6,7 +6,7 @@
     bottom: 0;
     z-index: var(--z-modal);
     backdrop-filter: blur(2px);
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: var(--backdrop);
 
     &.is-centered {
         display: flex;

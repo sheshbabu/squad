@@ -18,7 +18,7 @@ export default function useMarkdownFormatter({ textareaRef, setContent }) {
   function replaceContent(newContent, newPosition) {
     setContent(newContent);
     setTimeout(() => {
-      if (textareaRef.current) {
+      if (textareaRef.current !== null) {
         textareaRef.current.selectionStart = newPosition;
         textareaRef.current.selectionEnd = newPosition;
         textareaRef.current.focus();

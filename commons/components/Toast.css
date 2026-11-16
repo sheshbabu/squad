@@ -32,7 +32,7 @@
             align-items: center;
             justify-content: center;
             padding: var(--spacing-1);
-            border-radius: var(--radius-full);
+            border-radius: 50%;
 
             svg.lucide {
                 width: var(--icon-sm);
@@ -50,15 +50,15 @@
 
             &:hover {
                 background-color: var(--neutral-100);
+            }
 
-                svg.lucide {
-                    line,
-                    circle,
-                    rect,
-                    ellipse,
-                    path {
-                        stroke: var(--neutral-900);
-                    }
+            &:hover svg.lucide {
+                line,
+                circle,
+                rect,
+                ellipse,
+                path {
+                    stroke: var(--neutral-900);
                 }
             }
         }

@@ -12,7 +12,7 @@ import { getRunningLabel } from './toolLabels.js';
 import ApiClient from '../../commons/http/ApiClient.js';
 import navigateTo from '../../commons/utils/navigateTo.js';
 import useIsOnline from '../../commons/utils/useIsOnline.js';
-import MessageItem, { ToolActivity } from './MessageItem.jsx';
+import { MessageItem, ToolActivity } from './MessageItem.jsx';
 import Composer from './Composer.jsx';
 import ThreadMenu from './ThreadMenu.jsx';
 import RenameThreadModal from './RenameThreadModal.jsx';

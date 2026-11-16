@@ -170,7 +170,7 @@ func handleUnknownAPIRoute(w http.ResponseWriter, r *http.Request) {
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	indexPage, err := readAsset("index.html")
 	if err != nil {
-		slog.Error(err.Error())
+		slog.Error("error reading index page", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -190,8 +190,7 @@ func handleStaticAssets(w http.ResponseWriter, r *http.Request) {
 	} else {
 		subtree, err := fs.Sub(assets, "assets")
 		if err != nil {
-			err = fmt.Errorf("error reading assets subtree: %w", err)
-			slog.Error(err.Error())
+			slog.Error("error reading assets subtree", "error", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -205,7 +204,7 @@ func handleStaticAssets(w http.ResponseWriter, r *http.Request) {
 func handleServiceWorker(w http.ResponseWriter, r *http.Request) {
 	content, err := readAsset("sw.js")
 	if err != nil {
-		slog.Error(err.Error())
+		slog.Error("error reading service worker", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

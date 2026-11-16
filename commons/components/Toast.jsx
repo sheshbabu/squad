@@ -5,18 +5,25 @@ const { useState, useEffect } = React;
 
 let toastRoot = null;
 
+export default function showToast(message, duration = 3000) {
+  if (toastRoot === null) {
+    toastRoot = ReactDOM.createRoot(document.querySelector('.toast-root'));
+  }
+  toastRoot.render(<Toast message={message} duration={duration} key={Date.now()} />);
+}
+
 function Toast({ message, duration }) {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     setIsOpen(true);
     if (duration > 0) {
-      const timer = setTimeout(handleDismiss, duration);
+      const timer = setTimeout(() => setIsOpen(false), duration);
       return () => clearTimeout(timer);
     }
   }, [message, duration]);
 
-  function handleDismiss() {
+  function handleCloseClick() {
     setIsOpen(false);
   }
 
@@ -29,16 +36,9 @@ function Toast({ message, duration }) {
       <div className="toast-message">
         {message}
       </div>
-      <div className="toast-close" onClick={handleDismiss}>
+      <div className="toast-close" onClick={handleCloseClick}>
         <CloseIcon />
       </div>
     </div>
   );
-}
-
-export function showToast(message, duration = 3000) {
-  if (toastRoot === null) {
-    toastRoot = ReactDOM.createRoot(document.querySelector('.toast-root'));
-  }
-  toastRoot.render(<Toast message={message} duration={duration} key={Date.now()} />);
 }

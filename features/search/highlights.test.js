@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { splitHighlights } from "./highlights.js";
+import splitHighlights from "./highlights.js";
 
 const text = value => ({ text: value, isMatch: false });
 const match = value => ({ text: value, isMatch: true });

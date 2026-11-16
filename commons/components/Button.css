@@ -81,7 +81,7 @@
     &.danger {
         background-color: var(--red-600);
         /* stays light in both themes; the red background does not invert */
-        color: #FAFAFA;
+        color: white;
 
         &:hover {
             background-color: var(--red-700);

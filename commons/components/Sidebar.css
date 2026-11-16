@@ -93,10 +93,10 @@
                     width: var(--icon-sm);
                     height: var(--icon-sm);
                     padding: calc(var(--spacing-2) + 2px);
+                }
 
-                    path {
-                        stroke: currentColor;
-                    }
+                svg.lucide path {
+                    stroke: currentColor;
                 }
 
                 &:hover {
@@ -165,7 +165,7 @@
             /* Shares the open sidebar's layer so it also covers the bottom navbar, which sits on the modal layer. */
             z-index: var(--z-popover);
             backdrop-filter: blur(2px);
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: var(--backdrop);
         }
     }
 

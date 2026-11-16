@@ -38,15 +38,16 @@
             &:hover,
             &.is-active {
                 background-color: var(--neutral-100);
+            }
 
-                svg.lucide {
-                    line,
-                    circle,
-                    rect,
-                    ellipse,
-                    path {
-                        stroke: var(--neutral-900);
-                    }
+            &:hover svg.lucide,
+            &.is-active svg.lucide {
+                line,
+                circle,
+                rect,
+                ellipse,
+                path {
+                    stroke: var(--neutral-900);
                 }
             }
 

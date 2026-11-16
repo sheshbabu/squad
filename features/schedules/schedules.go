@@ -33,7 +33,7 @@ func HandleGetScheduleThreads(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := GetSchedule(botID, scheduleID); err != nil {
-		utils.SendErrorResponse(w, http.StatusNotFound, "SCHEDULE_NOT_FOUND", "Schedule not found", err)
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "SCHEDULE_READ_FAILED", "Failed to load schedule", err)
 		return
 	}
 
@@ -54,7 +54,7 @@ func HandleRunSchedule(w http.ResponseWriter, r *http.Request) {
 
 	schedule, err := GetSchedule(botID, scheduleID)
 	if err != nil {
-		utils.SendErrorResponse(w, http.StatusNotFound, "SCHEDULE_NOT_FOUND", "Schedule not found", err)
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "SCHEDULE_READ_FAILED", "Failed to load schedule", err)
 		return
 	}
 

@@ -1,5 +1,5 @@
 // Callers render these segments as text rather than HTML, so markup in a message never runs.
-export function splitHighlights(text) {
+export default function splitHighlights(text) {
   if (text === undefined) {
     return [];
   }

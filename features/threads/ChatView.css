@@ -138,17 +138,6 @@
     }
 }
 
-/* EmptyState paints its icon grey, so the bot's avatar is given back its own color here. */
-.chat-view .empty-state-icon svg.lucide.bot-avatar {
-    line,
-    circle,
-    rect,
-    ellipse,
-    path {
-        stroke: currentColor;
-    }
-}
-
 @keyframes chat-view-shimmer {
     /* The band starts and ends fully off the text, so the loop restarts on plain text without a jump. */
     from {

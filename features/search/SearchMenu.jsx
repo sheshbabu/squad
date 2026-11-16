@@ -5,7 +5,7 @@ import ApiClient from '../../commons/http/ApiClient.js';
 import navigateTo from '../../commons/utils/navigateTo.js';
 import SearchHistory from '../../commons/preferences/SearchHistory.js';
 import RecentSearchQuery from './RecentSearchQuery.js';
-import { splitHighlights } from './highlights.js';
+import splitHighlights from './highlights.js';
 import './SearchMenu.css';
 
 const { useState, useEffect, useRef } = React;
@@ -23,7 +23,7 @@ export default function SearchMenu() {
   const isPointerActiveRef = useRef(false);
 
   useEffect(() => {
-    if (inputRef.current) {
+    if (inputRef.current !== null) {
       inputRef.current.focus();
       // The cursor goes to the end, not the start, when the modal reopens with a recalled query.
       const length = inputRef.current.value.length;
@@ -52,7 +52,7 @@ export default function SearchMenu() {
     const value = event.target.value;
     setQuery(value);
 
-    if (debounceTimerRef.current) {
+    if (debounceTimerRef.current !== null) {
       clearTimeout(debounceTimerRef.current);
     }
 
@@ -140,31 +140,31 @@ export default function SearchMenu() {
   if (query.trim() === "") {
     if (searchHistory.length > 0) {
       historySection = (
-        <div className="search-section">
-          <h4 className="search-section-title">Recent</h4>
+        <div className="search-menu-section">
+          <h4 className="search-menu-section-title">Recent</h4>
           {renderItems(searchHistory, "history")}
         </div>
       );
     }
   } else if (results.length > 0) {
     chatsSection = (
-      <div className="search-section">
-        <h4 className="search-section-title">Chats</h4>
+      <div className="search-menu-section">
+        <h4 className="search-menu-section-title">Chats</h4>
         {renderItems(results, "chat")}
       </div>
     );
   } else if (hasSearched) {
-    emptySection = <div className="search-empty">No results for "{query}"</div>;
+    emptySection = <div className="search-menu-empty">No results for "{query}"</div>;
   }
 
   return (
     <ModalBackdrop onClose={closeModal} isCentered={false}>
-      <ModalContainer className="search-modal">
-        <div className="search-input-container">
+      <ModalContainer className="search-menu">
+        <div className="search-menu-input-container">
           <SearchIcon />
           <input type="text" placeholder="Search..." spellCheck="false" ref={inputRef} value={query} onChange={handleChange} onKeyDown={handleKeyDown} />
         </div>
-        <div className="search-results-container" onMouseMove={handleResultsMouseMove}>
+        <div className="search-menu-results-container" onMouseMove={handleResultsMouseMove}>
           {historySection}
           {chatsSection}
           {emptySection}
@@ -178,11 +178,11 @@ function SearchResultItem({ item, bot, isSelected, onClick, onMouseEnter }) {
   const subtitleSegments = splitHighlights(item.snippet);
 
   return (
-    <div className={`search-result-item ${isSelected ? "is-selected" : ""}`} onClick={onClick} onMouseEnter={onMouseEnter}>
-      <span className={`search-result-item-icon color-${bot?.color ?? "gray"}`}><BotAvatar name={bot?.icon} /></span>
-      <div className="search-result-item-content">
-        <p className="title">{item.title}</p>
-        <p className="subtitle"><HighlightedText segments={subtitleSegments} /></p>
+    <div className={`search-menu-result-item ${isSelected ? "is-selected" : ""}`} onClick={onClick} onMouseEnter={onMouseEnter}>
+      <span className={`search-menu-result-item-icon color-${bot?.color ?? "gray"}`}><BotAvatar name={bot?.icon} /></span>
+      <div className="search-menu-result-item-content">
+        <p className="search-menu-result-item-title">{item.title}</p>
+        <p className="search-menu-result-item-subtitle"><HighlightedText segments={subtitleSegments} /></p>
       </div>
     </div>
   );

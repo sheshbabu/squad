@@ -1,13 +1,13 @@
 import Markdown from '../../commons/components/Markdown.jsx';
 import { FileIcon, CopyIcon, CheckIcon, ChevronRightIcon } from '../../commons/components/Icon.jsx';
-import { showToast } from '../../commons/components/Toast.jsx';
+import showToast from '../../commons/components/Toast.jsx';
 import formatDate from '../../commons/utils/formatDate.js';
 import { getSummaryLabel, getDoneLabel } from './toolLabels.js';
 import './MessageItem.css';
 
 const { useState } = React;
 
-export default function MessageItem({ message }) {
+export function MessageItem({ message }) {
   if (message.role === "user") {
     return <UserMessage message={message} />;
   }

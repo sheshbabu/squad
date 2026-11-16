@@ -1,18 +1,5 @@
 const { useEffect } = React;
 
-const listPatterns = [
-  /^(\s*)(- \[ \] )/,
-  /^(\s*)(- \[x\] )/,
-  /^(\s*)(- )/,
-  /^(\s*)(\* )/,
-  /^(\s*)(\+ )/,
-  /^(\s*)(\d+\. )/,
-];
-
-function isListLine(line) {
-  return listPatterns.some(pattern => pattern.test(line));
-}
-
 export default function useEditorKeyboardShortcuts({ isEditing, textareaRef, onSave, onEdit, onReplaceContent, onInsertAtCursor, onFormatText }) {
   function replaceLine(textarea, lineStart, newLine, newCursorPos) {
     const lineEnd = textarea.value.indexOf('\n', lineStart);
@@ -129,4 +116,17 @@ export default function useEditorKeyboardShortcuts({ isEditing, textareaRef, onS
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   });
+}
+
+const listPatterns = [
+  /^(\s*)(- \[ \] )/,
+  /^(\s*)(- \[x\] )/,
+  /^(\s*)(- )/,
+  /^(\s*)(\* )/,
+  /^(\s*)(\+ )/,
+  /^(\s*)(\d+\. )/,
+];
+
+function isListLine(line) {
+  return listPatterns.some(pattern => pattern.test(line));
 }

@@ -47,21 +47,21 @@ export default function LoginPage({ isOnboarding = false }) {
       });
   }
 
-  let header = <div className="login-title">Login</div>;
+  let header = <div className="login-page-title">Login</div>;
   let buttonText = "Login";
 
   if (isOnboarding) {
     header = (
       <div>
-        <div className="login-title">Let's get started!</div>
-        <div className="login-subtitle">Create your account.</div>
+        <div className="login-page-title">Let's get started!</div>
+        <div className="login-page-subtitle">Create your account.</div>
       </div>
     );
     buttonText = "Continue";
   }
 
   return (
-    <form className="login-container" onSubmit={handleSubmit}>
+    <form className="login-page" onSubmit={handleSubmit}>
       {header}
       <Input id="email" label="Email" type="email" placeholder="Enter your email address" value={email} error={emailError} onChange={event => setEmail(event.target.value)} />
       <Input id="password" label="Password" type="password" placeholder="Enter your password" value={password} error={passwordError} onChange={event => setPassword(event.target.value)} />

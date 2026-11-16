@@ -1,6 +1,6 @@
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
 import Button from '../../commons/components/Button.jsx';
-import { showToast } from '../../commons/components/Toast.jsx';
+import showToast from '../../commons/components/Toast.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 import './BotWebhookPane.css';
 

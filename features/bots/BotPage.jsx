@@ -109,7 +109,7 @@ function BotPageContent({ botId, threadId, fileName }) {
       content = <EmptyState title="Bot not found" description="It may have been deleted." />;
     }
     return (
-      <div className="page-container">
+      <div className="page-container bot-page">
         <Sidebar currentBotId={botId} />
         <div className="bot-page-missing">{content}</div>
       </div>
@@ -134,7 +134,7 @@ function BotPageContent({ botId, threadId, fileName }) {
     mobileNavbar = <MobileNavbar currentBotId={botId} />;
   }
 
-  let pageClassName = "page-container";
+  let pageClassName = "page-container bot-page";
   if (isChatExpanded && !isFilesView) {
     pageClassName += " is-chat-expanded";
   }

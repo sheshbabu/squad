@@ -13,8 +13,8 @@ export default function MobileNavbar({ currentBotId }) {
   }
 
   return (
-    <div className="mobile-navbar-container">
-      <div className="mobile-navbar">
+    <div className="mobile-navbar">
+      <div className="mobile-navbar-bar">
         <div className="mobile-navbar-button" onClick={toggleSidebar}>
           <BotIcon />
           Bots

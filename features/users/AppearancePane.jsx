@@ -70,21 +70,19 @@ export default function AppearancePane() {
   const themeOptions = themes.map(theme => {
     const isSelected = selectedThemeId === theme.id;
     return (
-      <div key={theme.id} className={`theme-option ${isSelected ? 'is-selected' : ''}`} onClick={() => handleThemeSelect(theme.id)}>
-        <div className="theme-preview">
+      <div key={theme.id} className={`appearance-pane-theme ${isSelected ? 'is-selected' : ''}`} onClick={() => handleThemeSelect(theme.id)}>
+        <div className="appearance-pane-theme-preview">
           {theme.preview}
         </div>
-        <div className="theme-info">
-          <div className="theme-name">{theme.name}</div>
-        </div>
+        <div className="appearance-pane-theme-name">{theme.name}</div>
       </div>
     );
   });
 
   return (
-    <div className="settings-pane">
+    <div className="settings-pane appearance-pane">
       <SettingsSection title="Theme" description="Choose between light, dark, or system themes to match your preferences.">
-        <div className="theme-selector">
+        <div className="appearance-pane-themes">
           {themeOptions}
         </div>
       </SettingsSection>
@@ -94,11 +92,11 @@ export default function AppearancePane() {
 
 function SystemThemePreview() {
   return (
-    <div className="system-theme-preview">
-      <div className="system-theme-half">
+    <div className="appearance-pane-system-preview">
+      <div className="appearance-pane-system-preview-half">
         <LightThemePreview />
       </div>
-      <div className="system-theme-half">
+      <div className="appearance-pane-system-preview-half">
         <DarkThemePreview />
       </div>
     </div>

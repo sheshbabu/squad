@@ -393,43 +393,43 @@
         border-radius: var(--radius-1);
         padding: 2px;
     }
-}
 
-.has-foldable-headings {
-    >h1,
-    >h2,
-    >h3 {
-        cursor: pointer;
-        transition: color var(--transition-fast) ease;
-    }
-
-    @media (hover: hover) {
-        >h1:hover,
-        >h2:hover,
-        >h3:hover {
-            color: var(--neutral-600);
+    &.has-foldable-headings {
+        >h1,
+        >h2,
+        >h3 {
+            cursor: pointer;
+            transition: color var(--transition-fast) ease;
         }
-    }
 
-    /* Balanced wrapping pushes the fold pill onto its own line. */
-    >h1.is-folded,
-    >h2.is-folded,
-    >h3.is-folded {
-        text-wrap: wrap;
-    }
+        @media (hover: hover) {
+            >h1:hover,
+            >h2:hover,
+            >h3:hover {
+                color: var(--neutral-600);
+            }
+        }
 
-    >h1.is-folded::after,
-    >h2.is-folded::after,
-    >h3.is-folded::after {
-        content: "\22EF";
-        display: inline-block;
-        margin-left: var(--spacing-2);
-        padding: 0 var(--spacing-2);
-        border-radius: var(--radius-full);
-        background-color: var(--neutral-100);
-        color: var(--neutral-500);
-        font: var(--sm);
-        font-weight: 600;
-        vertical-align: middle;
+        /* Balanced wrapping pushes the fold pill onto its own line. */
+        >h1.is-folded,
+        >h2.is-folded,
+        >h3.is-folded {
+            text-wrap: wrap;
+        }
+
+        >h1.is-folded::after,
+        >h2.is-folded::after,
+        >h3.is-folded::after {
+            content: "\22EF";
+            display: inline-block;
+            margin-left: var(--spacing-2);
+            padding: 0 var(--spacing-2);
+            border-radius: var(--radius-full);
+            background-color: var(--neutral-100);
+            color: var(--neutral-500);
+            font: var(--sm);
+            font-weight: 600;
+            vertical-align: middle;
+        }
     }
 }

@@ -1,4 +1,4 @@
-.mobile-navbar-container {
+.mobile-navbar {
     display: none;
     position: fixed;
     bottom: 0;
@@ -10,7 +10,7 @@
     background-color: var(--bg-primary);
     padding-bottom: var(--safe-area-bottom);
 
-    .mobile-navbar {
+    .mobile-navbar-bar {
         display: flex;
         justify-content: space-around;
         padding: var(--spacing-2);
@@ -42,7 +42,7 @@
 }
 
 @media screen and (max-width: 948px) {
-    .mobile-navbar-container {
+    .mobile-navbar {
         display: block;
     }
 }

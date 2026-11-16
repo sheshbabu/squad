@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"squad/commons/llm"
 	"squad/commons/sqlite"
-	"strings"
 	"time"
 )
 
@@ -255,36 +254,6 @@ func queryMessages(where string, args ...any) ([]Message, error) {
 	return messages, nil
 }
 
-func GetPendingToolCalls(messages []Message) []llm.ToolCall {
-	lastAssistantIndex := -1
-	for i := len(messages) - 1; i >= 0; i-- {
-		if messages[i].Role == ROLE_ASSISTANT {
-			lastAssistantIndex = i
-			break
-		}
-	}
-
-	if lastAssistantIndex == -1 {
-		return nil
-	}
-
-	answeredIDs := map[string]bool{}
-	for _, message := range messages[lastAssistantIndex+1:] {
-		if message.Role == ROLE_TOOL {
-			answeredIDs[message.ToolCallID] = true
-		}
-	}
-
-	pending := []llm.ToolCall{}
-	for _, toolCall := range messages[lastAssistantIndex].ToolCalls {
-		if !answeredIDs[toolCall.ID] {
-			pending = append(pending, toolCall)
-		}
-	}
-
-	return pending
-}
-
 // FillPendingToolCalls answers unfinished tool calls with a fixed result, because the next model request is rejected if any tool call lacks one.
 func FillPendingToolCalls(threadID int, result string) ([]Message, error) {
 	messages, err := GetAllMessages(threadID)
@@ -313,17 +282,6 @@ func CountUserMessages(threadID int) (int, error) {
 	}
 
 	return count, nil
-}
-
-func GetTitleFromContent(content string) string {
-	title := strings.Join(strings.Fields(content), " ")
-
-	runes := []rune(title)
-	if len(runes) > 60 {
-		title = string(runes[:60]) + "…"
-	}
-
-	return title
 }
 
 type ThreadUsage struct {

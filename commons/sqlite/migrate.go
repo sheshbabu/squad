@@ -141,8 +141,7 @@ func applyMigrations(migrations []migration) {
 		_, err = tx.Exec(m.content)
 
 		if err != nil {
-			err = fmt.Errorf("error applying migration %d: %w", m.version, err)
-			slog.Error(err.Error())
+			slog.Error("error applying migration", "version", m.version, "error", err)
 
 			err = tx.Rollback()
 			if err != nil {
@@ -157,8 +156,7 @@ func applyMigrations(migrations []migration) {
 		_, err = tx.Exec(query, m.version)
 
 		if err != nil {
-			err = fmt.Errorf("error updating migrations table %d: %w", m.version, err)
-			slog.Error(err.Error())
+			slog.Error("error updating migrations table", "version", m.version, "error", err)
 
 			err = tx.Rollback()
 			if err != nil {
@@ -173,8 +171,7 @@ func applyMigrations(migrations []migration) {
 	err = tx.Commit()
 
 	if err != nil {
-		err = fmt.Errorf("error commiting migrations: %w", err)
-		slog.Error(err.Error())
+		slog.Error("error committing migrations", "error", err)
 
 		err = tx.Rollback()
 		if err != nil {
