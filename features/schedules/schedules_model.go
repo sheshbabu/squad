@@ -54,6 +54,18 @@ func GetSchedules(botID int) ([]Schedule, error) {
 	return querySchedules("SELECT "+scheduleColumns+" FROM schedules WHERE bot_id = ? ORDER BY name COLLATE NOCASE", botID)
 }
 
+func GetSchedule(botID, scheduleID int) (Schedule, error) {
+	schedule, err := scanSchedule(sqlite.DB.QueryRow("SELECT "+scheduleColumns+" FROM schedules WHERE schedule_id = ? AND bot_id = ?", scheduleID, botID))
+	if errors.Is(err, sql.ErrNoRows) {
+		return schedule, fmt.Errorf("error retrieving schedule %d: %w", scheduleID, utils.ErrNotFound)
+	}
+	if err != nil {
+		return schedule, fmt.Errorf("error retrieving schedule %d: %w", scheduleID, err)
+	}
+
+	return schedule, nil
+}
+
 func GetDueSchedules() ([]Schedule, error) {
 	return querySchedules("SELECT " + scheduleColumns + " FROM schedules WHERE is_enabled = 1 AND next_run_at <= CURRENT_TIMESTAMP ORDER BY next_run_at")
 }

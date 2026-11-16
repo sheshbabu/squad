@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"squad/commons/utils"
+	"squad/features/threads"
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +24,47 @@ func HandleGetSchedules(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.SendJSONResponse(w, http.StatusOK, schedules)
+}
+
+func HandleGetScheduleThreads(w http.ResponseWriter, r *http.Request) {
+	botID, scheduleID, ok := parseScheduleIDs(w, r)
+	if !ok {
+		return
+	}
+
+	if _, err := GetSchedule(botID, scheduleID); err != nil {
+		utils.SendErrorResponse(w, http.StatusNotFound, "SCHEDULE_NOT_FOUND", "Schedule not found", err)
+		return
+	}
+
+	scheduleThreads, err := threads.GetScheduleThreads(scheduleID)
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "SCHEDULE_THREADS_READ_FAILED", "Failed to load runs", err)
+		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, scheduleThreads)
+}
+
+func HandleRunSchedule(w http.ResponseWriter, r *http.Request) {
+	botID, scheduleID, ok := parseScheduleIDs(w, r)
+	if !ok {
+		return
+	}
+
+	schedule, err := GetSchedule(botID, scheduleID)
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusNotFound, "SCHEDULE_NOT_FOUND", "Schedule not found", err)
+		return
+	}
+
+	thread, err := RunNow(schedule)
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "SCHEDULE_RUN_FAILED", "Failed to run schedule", err)
+		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, thread)
 }
 
 func HandleCreateSchedule(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +123,22 @@ func HandleDeleteSchedule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func parseScheduleIDs(w http.ResponseWriter, r *http.Request) (int, int, bool) {
+	botID, err := strconv.Atoi(r.PathValue("botId"))
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+		return 0, 0, false
+	}
+
+	scheduleID, err := strconv.Atoi(r.PathValue("scheduleId"))
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_SCHEDULE_ID", "Invalid schedule", nil)
+		return 0, 0, false
+	}
+
+	return botID, scheduleID, true
 }
 
 func decodeSchedule(w http.ResponseWriter, r *http.Request) (Schedule, bool) {

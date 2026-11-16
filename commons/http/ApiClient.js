@@ -185,6 +185,14 @@ function updateSchedule(botId, scheduleId, payload) {
   return request('PUT', `/api/bots/${botId}/schedules/${scheduleId}/`, payload);
 }
 
+function runSchedule(botId, scheduleId) {
+  return request('POST', `/api/bots/${botId}/schedules/${scheduleId}/run/`);
+}
+
+function getScheduleThreads(botId, scheduleId) {
+  return request('GET', `/api/bots/${botId}/schedules/${scheduleId}/threads/`);
+}
+
 function deleteSchedule(botId, scheduleId) {
   return request('DELETE', `/api/bots/${botId}/schedules/${scheduleId}/`);
 }
@@ -272,6 +280,8 @@ export default {
   getSchedules,
   createSchedule,
   updateSchedule,
+  runSchedule,
+  getScheduleThreads,
   deleteSchedule,
   getThreads,
   createThread,

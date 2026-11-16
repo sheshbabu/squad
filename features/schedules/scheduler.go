@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"slices"
 	"squad/commons/queue"
+	"squad/features/threads"
 	"strconv"
 	"strings"
 	"time"
@@ -64,15 +65,25 @@ func fireSchedule(schedule Schedule) error {
 		return err
 	}
 
-	title := schedule.Name + " · " + now.Format("2 Jan")
+	_, err = startRun(schedule, nextRunAt)
+	return err
+}
+
+// RunNow leaves the next planned run untouched.
+func RunNow(schedule Schedule) (threads.Thread, error) {
+	return startRun(schedule, schedule.NextRunAt)
+}
+
+func startRun(schedule Schedule, nextRunAt time.Time) (threads.Thread, error) {
+	title := schedule.Name + " · " + time.Now().Format("2 Jan")
 	thread, err := StartScheduleRun(schedule, title, nextRunAt)
 	if err != nil {
-		return err
+		return thread, err
 	}
 	queue.Wake()
 
 	slog.Info("schedule started a thread", "scheduleID", schedule.ScheduleID, "threadID", thread.ThreadID)
-	return nil
+	return thread, nil
 }
 
 func parseTimeOfDay(timeOfDay string) (int, int, error) {

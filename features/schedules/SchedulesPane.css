@@ -24,12 +24,70 @@
         color: var(--text-secondary);
     }
 
+    .schedules-pane-entry {
+        border-bottom: 1px solid var(--neutral-100);
+    }
+
+    .schedules-pane-runs {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: var(--spacing-2);
+
+        &.is-empty {
+            font: var(--xs);
+            color: var(--text-secondary);
+        }
+
+        .schedules-pane-run {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: var(--spacing-2);
+            padding: var(--spacing-1) 0;
+            font: var(--sm);
+        }
+
+        a.schedules-pane-run-title {
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: inherit;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .schedules-pane-run-meta {
+            display: flex;
+            flex-shrink: 0;
+            gap: var(--spacing-2);
+            font: var(--xs);
+            color: var(--text-secondary);
+        }
+
+        .schedules-pane-run-status {
+            &.is-done {
+                color: var(--green-500);
+            }
+
+            &.is-working {
+                color: var(--blue-500);
+            }
+
+            &.is-failed {
+                color: var(--red-500);
+            }
+        }
+    }
+
     .schedules-pane-item {
         display: flex;
         align-items: center;
         gap: var(--spacing-2);
         padding: var(--spacing-2) 0;
-        border-bottom: 1px solid var(--neutral-100);
 
         .schedules-pane-details {
             flex: 1;

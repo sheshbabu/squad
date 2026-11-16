@@ -73,6 +73,32 @@ func GetThreads(botID int) ([]Thread, error) {
 	return threads, nil
 }
 
+func GetScheduleThreads(scheduleID int) ([]Thread, error) {
+	threads := []Thread{}
+
+	query := "SELECT " + threadColumns + " FROM threads WHERE schedule_id = ? ORDER BY created_at DESC, thread_id DESC LIMIT 20"
+
+	rows, err := sqlite.DB.Query(query, scheduleID)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving schedule threads: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		thread, err := scanThread(rows)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning schedule thread: %w", err)
+		}
+		threads = append(threads, thread)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating schedule threads: %w", err)
+	}
+
+	return threads, nil
+}
+
 func GetThread(threadID int) (Thread, error) {
 	return getThread(sqlite.DB, threadID)
 }

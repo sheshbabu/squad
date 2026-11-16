@@ -28,7 +28,7 @@
 Any OpenAI-compatible chat completions API. OpenRouter is registered from `OPENROUTER_API_KEY` and adds provider pinning (`provider.order` with `allow_fallbacks: false`) and usage with cost. Assistant messages keep `reasoning_details` and send them back, since reasoning models need them across tool calls.
 
 ## Scheduled tasks
-The scheduler checks every 30s for due schedules, then creates a new thread with the schedule's prompt and starts a run. `next_run_at` is computed in local time (`TZ`). Missed runs fire once on startup.
+The scheduler checks every 30s for due schedules, then creates a new thread with the schedule's prompt and starts a run. `next_run_at` is computed in local time (`TZ`). Missed runs fire once on startup. "Run now" starts a run without moving `next_run_at`.
 
 ## Environment Variables
 - `DEV_MODE=true` - Serve assets from disk

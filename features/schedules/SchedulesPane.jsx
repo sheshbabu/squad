@@ -1,8 +1,12 @@
 import Button from '../../commons/components/Button.jsx';
 import Spinner from '../../commons/components/Spinner.jsx';
 import Toggle from '../../commons/components/Toggle.jsx';
-import { PencilIcon, TrashIcon } from '../../commons/components/Icon.jsx';
+import Link from '../../commons/components/Link.jsx';
+import { closeModal } from '../../commons/components/Modal.jsx';
+import { PencilIcon, TrashIcon, PlayIcon, HistoryIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
+import formatDate from '../../commons/utils/formatDate.js';
+import navigateTo from '../../commons/utils/navigateTo.js';
 import ScheduleForm from './ScheduleForm.jsx';
 import './SchedulesPane.css';
 
@@ -15,6 +19,8 @@ export default function SchedulesPane({ botId }) {
   const [isLoading, setIsLoading] = useState(true);
   const [editingSchedule, setEditingSchedule] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [historyScheduleId, setHistoryScheduleId] = useState(null);
+  const [runs, setRuns] = useState([]);
 
   useEffect(() => {
     ApiClient.getSchedules(botId)
@@ -31,6 +37,28 @@ export default function SchedulesPane({ botId }) {
 
   function handleToggle(schedule, isEnabled) {
     ApiClient.updateSchedule(botId, schedule.scheduleId, { ...schedule, isEnabled }).then(replaceSchedule);
+  }
+
+  function handleRunClick(schedule) {
+    ApiClient.runSchedule(botId, schedule.scheduleId).then(thread => {
+      closeModal();
+      navigateTo(`/bots/${botId}/threads/${thread.threadId}`);
+    });
+  }
+
+  function handleHistoryClick(schedule) {
+    if (historyScheduleId === schedule.scheduleId) {
+      setHistoryScheduleId(null);
+      return;
+    }
+
+    setRuns([]);
+    setHistoryScheduleId(schedule.scheduleId);
+    ApiClient.getScheduleThreads(botId, schedule.scheduleId).then(setRuns);
+  }
+
+  function handleRunLinkClick() {
+    closeModal();
   }
 
   function handleDeleteClick(schedule) {
@@ -60,17 +88,29 @@ export default function SchedulesPane({ botId }) {
     return <ScheduleForm botId={botId} schedule={editingSchedule} onSaved={handleSaved} onCancel={handleCancel} />;
   }
 
-  const items = schedules.map(schedule => (
-    <div key={schedule.scheduleId} className="schedules-pane-item">
-      <div className="schedules-pane-details">
-        <div className="schedules-pane-name">{schedule.name}</div>
-        <div className="schedules-pane-timing">{describeTiming(schedule)}</div>
+  const items = schedules.map(schedule => {
+    let historyElement = null;
+    if (historyScheduleId === schedule.scheduleId) {
+      historyElement = <ScheduleRuns botId={botId} runs={runs} onLinkClick={handleRunLinkClick} />;
+    }
+
+    return (
+      <div key={schedule.scheduleId} className="schedules-pane-entry">
+        <div className="schedules-pane-item">
+          <div className="schedules-pane-details">
+            <div className="schedules-pane-name">{schedule.name}</div>
+            <div className="schedules-pane-timing">{describeTiming(schedule)}</div>
+          </div>
+          <Toggle isEnabled={schedule.isEnabled} onChange={isEnabled => handleToggle(schedule, isEnabled)} />
+          <Button variant="ghost" onClick={() => handleRunClick(schedule)} title="Run now"><PlayIcon /></Button>
+          <Button variant="ghost" onClick={() => handleHistoryClick(schedule)} title="History"><HistoryIcon /></Button>
+          <Button variant="ghost" onClick={() => setEditingSchedule(schedule)} title="Edit"><PencilIcon /></Button>
+          <Button variant="ghost" onClick={() => handleDeleteClick(schedule)} title="Delete"><TrashIcon /></Button>
+        </div>
+        {historyElement}
       </div>
-      <Toggle isEnabled={schedule.isEnabled} onChange={isEnabled => handleToggle(schedule, isEnabled)} />
-      <Button variant="ghost" onClick={() => setEditingSchedule(schedule)} title="Edit"><PencilIcon /></Button>
-      <Button variant="ghost" onClick={() => handleDeleteClick(schedule)} title="Delete"><TrashIcon /></Button>
-    </div>
-  ));
+    );
+  });
 
   let emptyElement = null;
   if (schedules.length === 0) {
@@ -86,6 +126,38 @@ export default function SchedulesPane({ botId }) {
       </div>
     </div>
   );
+}
+
+function ScheduleRuns({ botId, runs, onLinkClick }) {
+  if (runs.length === 0) {
+    return <div className="schedules-pane-runs is-empty">No runs yet</div>;
+  }
+
+  const items = runs.map(run => {
+    const status = getRunStatus(run);
+
+    return (
+      <div key={run.threadId} className="schedules-pane-run">
+        <Link className="schedules-pane-run-title" to={`/bots/${botId}/threads/${run.threadId}`} onClick={onLinkClick}>{run.title}</Link>
+        <span className="schedules-pane-run-meta">
+          <span className={`schedules-pane-run-status ${status.className}`}>{status.label}</span>
+          {formatDate(new Date(run.createdAt))}
+        </span>
+      </div>
+    );
+  });
+
+  return <div className="schedules-pane-runs">{items}</div>;
+}
+
+function getRunStatus(run) {
+  if (run.status === "working") {
+    return { label: "Running", className: "is-working" };
+  }
+  if (run.status === "failed") {
+    return { label: "Failed", className: "is-failed" };
+  }
+  return { label: "Done", className: "is-done" };
 }
 
 function describeTiming(schedule) {

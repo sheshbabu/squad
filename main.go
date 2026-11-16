@@ -126,6 +126,8 @@ func newRouter() *http.ServeMux {
 	addSessionRoute(mux, "POST /api/bots/{botId}/schedules/", schedules.HandleCreateSchedule)
 	addSessionRoute(mux, "PUT /api/bots/{botId}/schedules/{scheduleId}/", schedules.HandleUpdateSchedule)
 	addSessionRoute(mux, "DELETE /api/bots/{botId}/schedules/{scheduleId}/", schedules.HandleDeleteSchedule)
+	addSessionRoute(mux, "POST /api/bots/{botId}/schedules/{scheduleId}/run/", schedules.HandleRunSchedule)
+	addSessionRoute(mux, "GET /api/bots/{botId}/schedules/{scheduleId}/threads/", schedules.HandleGetScheduleThreads)
 
 	addSessionRoute(mux, "GET /api/bots/{botId}/threads/", threads.HandleGetThreads)
 	addSessionRoute(mux, "POST /api/bots/{botId}/threads/", threads.HandleCreateThread)
