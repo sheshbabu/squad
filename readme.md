@@ -1,4 +1,5 @@
 <p align="center">
+  <img width="256" src="assets/android-chrome-512x512.png">
   <h1 align="center">Squad</h1>
   <p align="center">Self-hosted, always-on personal agents</p>
 </p>
