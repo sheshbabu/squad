@@ -182,7 +182,6 @@ export default function FileView({ botId, fileName, onSaved, onDeleted }) {
         </div>
         <div className="file-view-toolbar-right">{actions}</div>
       </div>
-      <div className="file-view-title">{fileName}</div>
       {body}
     </div>
   );

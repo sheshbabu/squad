@@ -1,6 +1,7 @@
 package files
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
@@ -17,6 +18,7 @@ import (
 
 type File struct {
 	Name      string    `json:"name"`
+	Title     string    `json:"title"`
 	Size      int64     `json:"size"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -75,7 +77,7 @@ func ListFiles(botID int) ([]File, error) {
 			return nil, fmt.Errorf("error reading file info: %w", err)
 		}
 
-		files = append(files, File{Name: entry.Name(), Size: info.Size(), UpdatedAt: info.ModTime()})
+		files = append(files, File{Name: entry.Name(), Title: readTitle(root, entry.Name()), Size: info.Size(), UpdatedAt: info.ModTime()})
 	}
 
 	sort.Slice(files, func(i, j int) bool {
@@ -83,6 +85,24 @@ func ListFiles(botID int) ([]File, error) {
 	})
 
 	return files, nil
+}
+
+func readTitle(root *os.Root, name string) string {
+	file, err := root.Open(name)
+	if err != nil {
+		return ""
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(strings.TrimLeft(strings.TrimSpace(scanner.Text()), "#"))
+		if line != "" {
+			return line
+		}
+	}
+
+	return ""
 }
 
 func ReadFile(botID int, name string) (FileContent, error) {

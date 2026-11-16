@@ -34,9 +34,19 @@
         }
 
         .files-list-subtext {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--spacing-2);
             margin-top: var(--spacing-1);
             font: var(--sm);
             color: var(--neutral-400);
+
+            .files-list-filename {
+                min-width: 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
         }
     }
 }

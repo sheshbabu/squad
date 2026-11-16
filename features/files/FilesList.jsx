@@ -14,8 +14,11 @@ export default function FilesList({ botId, files, selectedFileName }) {
       activeClassName="is-active"
       isActive={file.name === selectedFileName}
       to={`/bots/${botId}/files/${encodeURIComponent(file.name)}`}>
-      <div className="files-list-name">{file.name}</div>
-      <div className="files-list-subtext">{formatDate(new Date(file.updatedAt))}</div>
+      <div className="files-list-name">{file.title || file.name}</div>
+      <div className="files-list-subtext">
+        <span className="files-list-filename">{file.name}</span>
+        <span>{formatDate(new Date(file.updatedAt))}</span>
+      </div>
     </Link>
   ));
 

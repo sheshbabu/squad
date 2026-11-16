@@ -44,11 +44,6 @@
         }
     }
 
-    .file-view-title {
-        font: var(--h1);
-        margin-bottom: var(--spacing-4);
-    }
-
     .formatting-toolbar {
         margin: var(--spacing-3) 0;
     }
