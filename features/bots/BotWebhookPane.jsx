@@ -2,6 +2,7 @@ import SettingsSection from '../../commons/components/SettingsSection.jsx';
 import Button from '../../commons/components/Button.jsx';
 import showToast from '../../commons/components/Toast.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
+import { copyText, isClipboardAvailable } from '../../commons/utils/clipboard.js';
 import './BotWebhookPane.css';
 
 const { useState } = React;
@@ -37,9 +38,7 @@ export default function BotWebhookPane({ bot, onSaved }) {
   const url = `${window.location.origin}/api/hooks/${bot.webhookToken}/`;
 
   function handleCopyClick() {
-    navigator.clipboard.writeText(url)
-      .then(() => showToast("Copied"))
-      .catch(() => showToast("Couldn't copy URL."));
+    copyText(url, "Couldn't copy URL.", () => showToast("Copied"));
   }
 
   const description = `Anything sent to this URL starts a new chat with ${bot.name}, for example from an iOS Shortcut or a script. Anyone with the URL can message the bot, so keep it private.`;
@@ -55,7 +54,7 @@ export default function BotWebhookPane({ bot, onSaved }) {
   }
 
   let copyButton = null;
-  if (typeof navigator.clipboard !== 'undefined') {
+  if (isClipboardAvailable()) {
     copyButton = <Button onClick={handleCopyClick}>Copy</Button>;
   }
 

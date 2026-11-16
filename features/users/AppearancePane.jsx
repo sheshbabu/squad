@@ -46,12 +46,12 @@ const themes = [
   {
     id: 'dark',
     name: 'Dark',
-    preview: <DarkThemePreview />
+    preview: <ThemePreview colors={DARK_PREVIEW_COLORS} />
   },
   {
     id: 'light',
     name: 'Light',
-    preview: <LightThemePreview />
+    preview: <ThemePreview colors={LIGHT_PREVIEW_COLORS} />
   }
 ];
 
@@ -63,14 +63,10 @@ export default function AppearancePane() {
     ThemePreferences.applyTheme();
   }, [selectedThemeId]);
 
-  function handleThemeSelect(themeId) {
-    setSelectedThemeId(themeId);
-  }
-
   const themeOptions = themes.map(theme => {
     const isSelected = selectedThemeId === theme.id;
     return (
-      <div key={theme.id} className={`appearance-pane-theme ${isSelected ? 'is-selected' : ''}`} onClick={() => handleThemeSelect(theme.id)}>
+      <div key={theme.id} className={`appearance-pane-theme ${isSelected ? 'is-selected' : ''}`} onClick={() => setSelectedThemeId(theme.id)}>
         <div className="appearance-pane-theme-preview">
           {theme.preview}
         </div>
@@ -94,21 +90,13 @@ function SystemThemePreview() {
   return (
     <div className="appearance-pane-system-preview">
       <div className="appearance-pane-system-preview-half">
-        <LightThemePreview />
+        <ThemePreview colors={LIGHT_PREVIEW_COLORS} />
       </div>
       <div className="appearance-pane-system-preview-half">
-        <DarkThemePreview />
+        <ThemePreview colors={DARK_PREVIEW_COLORS} />
       </div>
     </div>
   );
-}
-
-function LightThemePreview() {
-  return <ThemePreview colors={LIGHT_PREVIEW_COLORS} />;
-}
-
-function DarkThemePreview() {
-  return <ThemePreview colors={DARK_PREVIEW_COLORS} />;
 }
 
 function ThemePreview({ colors }) {

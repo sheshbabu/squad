@@ -6,12 +6,13 @@ import (
 	"log/slog"
 	"net/http"
 	"squad/commons/stream"
+	"squad/commons/utils"
 	"time"
 )
 
 // Browsers refetch the thread whenever the connection opens, so anything sent while they were away is not lost.
 func HandleThreadEvents(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}

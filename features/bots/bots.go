@@ -48,9 +48,8 @@ func HandleCreateBot(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleUpdateBot(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -71,9 +70,8 @@ func HandleUpdateBot(w http.ResponseWriter, r *http.Request) {
 
 // HandleUpdateBotTools is separate from HandleUpdateBot so saving the profile or model never resets a bot's tools.
 func HandleUpdateBotTools(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -100,9 +98,8 @@ func HandleUpdateBotTools(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteBot(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -178,9 +175,8 @@ func decodeBot(w http.ResponseWriter, r *http.Request) (Bot, bool) {
 }
 
 func HandleRegenerateBotWebhook(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -200,9 +196,8 @@ func HandleRegenerateBotWebhook(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteBotWebhook(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 

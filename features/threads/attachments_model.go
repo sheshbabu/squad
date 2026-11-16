@@ -2,7 +2,6 @@ package threads
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"squad/commons/sqlite"
 	"squad/commons/utils"
@@ -42,11 +41,8 @@ func CreateAttachment(attachment Attachment) (Attachment, error) {
 
 func GetAttachment(attachmentID int) (Attachment, error) {
 	attachment, err := scanAttachment(sqlite.DB.QueryRow("SELECT "+attachmentColumns+" FROM attachments WHERE attachment_id = ?", attachmentID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return attachment, fmt.Errorf("error retrieving attachment %d: %w", attachmentID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return attachment, fmt.Errorf("error retrieving attachment %d: %w", attachmentID, err)
+		return attachment, fmt.Errorf("error retrieving attachment %d: %w", attachmentID, utils.NotFoundIfNoRows(err))
 	}
 
 	return attachment, nil
@@ -57,17 +53,9 @@ func LinkAttachmentsTx(tx *sql.Tx, botID, messageID int, attachmentIDs []int) er
 	for _, attachmentID := range attachmentIDs {
 		query := "UPDATE attachments SET message_id = ? WHERE attachment_id = ? AND bot_id = ? AND message_id IS NULL"
 
-		result, err := tx.Exec(query, messageID, attachmentID, botID)
+		err := utils.RequireAffected(tx.Exec(query, messageID, attachmentID, botID))
 		if err != nil {
 			return fmt.Errorf("error linking attachment %d: %w", attachmentID, err)
-		}
-
-		count, err := result.RowsAffected()
-		if err != nil {
-			return fmt.Errorf("error checking linked attachment %d: %w", attachmentID, err)
-		}
-		if count == 0 {
-			return fmt.Errorf("error linking attachment %d: %w", attachmentID, utils.ErrNotFound)
 		}
 	}
 

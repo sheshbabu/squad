@@ -1,8 +1,6 @@
 package bots
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
 	"squad/commons/sqlite"
 	"squad/commons/utils"
@@ -75,11 +73,8 @@ func GetBots() ([]Bot, error) {
 
 func GetBot(botID int) (Bot, error) {
 	bot, err := scanBot(sqlite.DB.QueryRow("SELECT "+botColumns+" FROM bots WHERE bot_id = ?", botID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return bot, fmt.Errorf("error retrieving bot %d: %w", botID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return bot, fmt.Errorf("error retrieving bot %d: %w", botID, err)
+		return bot, fmt.Errorf("error retrieving bot %d: %w", botID, utils.NotFoundIfNoRows(err))
 	}
 
 	return bot, nil
@@ -107,11 +102,8 @@ func UpdateBot(bot Bot) (Bot, error) {
 		RETURNING ` + botColumns
 
 	updated, err := scanBot(sqlite.DB.QueryRow(query, bot.Name, bot.Icon, bot.Color, bot.SystemPrompt, bot.Gateway, bot.Model, bot.Provider, bot.ReasoningEffort, bot.UsesAboutMe, bot.BotID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return updated, fmt.Errorf("error updating bot %d: %w", bot.BotID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return updated, fmt.Errorf("error updating bot %d: %w", bot.BotID, err)
+		return updated, fmt.Errorf("error updating bot %d: %w", bot.BotID, utils.NotFoundIfNoRows(err))
 	}
 
 	return updated, nil
@@ -125,11 +117,8 @@ func UpdateBotTools(botID int, disabledToolGroups []string, zenAPIToken string) 
 		RETURNING ` + botColumns
 
 	updated, err := scanBot(sqlite.DB.QueryRow(query, strings.Join(disabledToolGroups, ","), zenAPIToken, botID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return updated, fmt.Errorf("error updating bot %d tools: %w", botID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return updated, fmt.Errorf("error updating bot %d tools: %w", botID, err)
+		return updated, fmt.Errorf("error updating bot %d tools: %w", botID, utils.NotFoundIfNoRows(err))
 	}
 
 	return updated, nil
@@ -143,11 +132,8 @@ func UpdateBotWebhookToken(botID int, webhookToken string) (Bot, error) {
 		RETURNING ` + botColumns
 
 	updated, err := scanBot(sqlite.DB.QueryRow(query, webhookToken, botID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return updated, fmt.Errorf("error updating bot %d webhook: %w", botID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return updated, fmt.Errorf("error updating bot %d webhook: %w", botID, err)
+		return updated, fmt.Errorf("error updating bot %d webhook: %w", botID, utils.NotFoundIfNoRows(err))
 	}
 
 	return updated, nil
@@ -155,28 +141,17 @@ func UpdateBotWebhookToken(botID int, webhookToken string) (Bot, error) {
 
 func GetBotByWebhookToken(webhookToken string) (Bot, error) {
 	bot, err := scanBot(sqlite.DB.QueryRow("SELECT "+botColumns+" FROM bots WHERE webhook_token = ? AND webhook_token != ''", webhookToken))
-	if errors.Is(err, sql.ErrNoRows) {
-		return bot, fmt.Errorf("error getting bot by webhook token: %w", utils.ErrNotFound)
-	}
 	if err != nil {
-		return bot, fmt.Errorf("error getting bot by webhook token: %w", err)
+		return bot, fmt.Errorf("error getting bot by webhook token: %w", utils.NotFoundIfNoRows(err))
 	}
 
 	return bot, nil
 }
 
 func DeleteBot(botID int) error {
-	result, err := sqlite.DB.Exec("DELETE FROM bots WHERE bot_id = ?", botID)
+	err := utils.RequireAffected(sqlite.DB.Exec("DELETE FROM bots WHERE bot_id = ?", botID))
 	if err != nil {
 		return fmt.Errorf("error deleting bot %d: %w", botID, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking deleted bot %d: %w", botID, err)
-	}
-	if count == 0 {
-		return fmt.Errorf("error deleting bot %d: %w", botID, utils.ErrNotFound)
 	}
 
 	return nil

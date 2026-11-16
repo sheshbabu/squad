@@ -53,17 +53,9 @@ func CreateMemory(botID int, content string) (Memory, error) {
 
 // DeleteMemory is scoped to the bot so one bot's tool call can't delete another bot's memory.
 func DeleteMemory(botID, memoryID int) error {
-	result, err := sqlite.DB.Exec("DELETE FROM memories WHERE memory_id = ? AND bot_id = ?", memoryID, botID)
+	err := utils.RequireAffected(sqlite.DB.Exec("DELETE FROM memories WHERE memory_id = ? AND bot_id = ?", memoryID, botID))
 	if err != nil {
 		return fmt.Errorf("error deleting memory %d: %w", memoryID, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking deleted memory %d: %w", memoryID, err)
-	}
-	if count == 0 {
-		return fmt.Errorf("error deleting memory %d: %w", memoryID, utils.ErrNotFound)
 	}
 
 	return nil

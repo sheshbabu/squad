@@ -111,11 +111,8 @@ func getThread(queryer interface {
 	QueryRow(string, ...any) *sql.Row
 }, threadID int) (Thread, error) {
 	thread, err := scanThread(queryer.QueryRow("SELECT "+threadColumns+" FROM threads WHERE thread_id = ?", threadID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return thread, fmt.Errorf("error retrieving thread %d: %w", threadID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return thread, fmt.Errorf("error retrieving thread %d: %w", threadID, err)
+		return thread, fmt.Errorf("error retrieving thread %d: %w", threadID, utils.NotFoundIfNoRows(err))
 	}
 
 	return thread, nil
@@ -254,28 +251,17 @@ func UpdateThreadTitle(threadID int, title string) (Thread, error) {
 	query := "UPDATE threads SET title = ? WHERE thread_id = ? RETURNING " + threadColumns
 
 	thread, err := scanThread(sqlite.DB.QueryRow(query, title, threadID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return thread, fmt.Errorf("error updating thread %d title: %w", threadID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return thread, fmt.Errorf("error updating thread %d title: %w", threadID, err)
+		return thread, fmt.Errorf("error updating thread %d title: %w", threadID, utils.NotFoundIfNoRows(err))
 	}
 
 	return thread, nil
 }
 
 func DeleteThread(threadID int) error {
-	result, err := sqlite.DB.Exec("DELETE FROM threads WHERE thread_id = ?", threadID)
+	err := utils.RequireAffected(sqlite.DB.Exec("DELETE FROM threads WHERE thread_id = ?", threadID))
 	if err != nil {
 		return fmt.Errorf("error deleting thread %d: %w", threadID, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking deleted thread %d: %w", threadID, err)
-	}
-	if count == 0 {
-		return fmt.Errorf("error deleting thread %d: %w", threadID, utils.ErrNotFound)
 	}
 
 	return nil

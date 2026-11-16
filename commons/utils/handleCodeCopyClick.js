@@ -1,6 +1,4 @@
-import showToast from "../components/Toast.jsx";
-
-const COPIED_DURATION = 2000;
+import { COPIED_DURATION, copyText } from "./clipboard.js";
 
 export default function handleCodeCopyClick(event) {
   const button = event.target.closest('.code-copy-button');
@@ -13,13 +11,7 @@ export default function handleCodeCopyClick(event) {
     return false;
   }
 
-  navigator.clipboard.writeText(code.textContent)
-    .then(() => {
-      showCopiedState(button);
-    })
-    .catch(() => {
-      showToast("Couldn't copy code.");
-    });
+  copyText(code.textContent, "Couldn't copy code.", () => showCopiedState(button));
 
   return true;
 }

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"slices"
 	"squad/commons/utils"
-	"strconv"
 	"time"
 )
 
@@ -37,9 +36,8 @@ type ChatCost struct {
 }
 
 func HandleGetBotCost(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 

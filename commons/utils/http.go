@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 )
 
 var ErrNotFound = errors.New("not found")
@@ -27,6 +28,16 @@ func SendErrorResponse(w http.ResponseWriter, statusCode int, code string, messa
 		Code:    code,
 		Message: message,
 	})
+}
+
+func ParsePathID(w http.ResponseWriter, r *http.Request, name string, code string, message string) (int, bool) {
+	id, err := strconv.Atoi(r.PathValue(name))
+	if err != nil {
+		SendErrorResponse(w, http.StatusBadRequest, code, message, nil)
+		return 0, false
+	}
+
+	return id, true
 }
 
 func SendJSONResponse(w http.ResponseWriter, statusCode int, data any) {

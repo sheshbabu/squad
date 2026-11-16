@@ -2,7 +2,6 @@ package schedules
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"squad/commons/sqlite"
 	"squad/commons/utils"
@@ -56,11 +55,8 @@ func GetSchedules(botID int) ([]Schedule, error) {
 
 func GetSchedule(botID, scheduleID int) (Schedule, error) {
 	schedule, err := scanSchedule(sqlite.DB.QueryRow("SELECT "+scheduleColumns+" FROM schedules WHERE schedule_id = ? AND bot_id = ?", scheduleID, botID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return schedule, fmt.Errorf("error retrieving schedule %d: %w", scheduleID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return schedule, fmt.Errorf("error retrieving schedule %d: %w", scheduleID, err)
+		return schedule, fmt.Errorf("error retrieving schedule %d: %w", scheduleID, utils.NotFoundIfNoRows(err))
 	}
 
 	return schedule, nil
@@ -116,11 +112,8 @@ func UpdateSchedule(schedule Schedule) (Schedule, error) {
 		RETURNING ` + scheduleColumns
 
 	updated, err := scanSchedule(sqlite.DB.QueryRow(query, schedule.Name, schedule.Prompt, schedule.Frequency, schedule.TimeOfDay, formatWeekdays(schedule.Weekdays), schedule.IsEnabled, formatTimestamp(schedule.NextRunAt), schedule.ScheduleID, schedule.BotID))
-	if errors.Is(err, sql.ErrNoRows) {
-		return updated, fmt.Errorf("error updating schedule %d: %w", schedule.ScheduleID, utils.ErrNotFound)
-	}
 	if err != nil {
-		return updated, fmt.Errorf("error updating schedule %d: %w", schedule.ScheduleID, err)
+		return updated, fmt.Errorf("error updating schedule %d: %w", schedule.ScheduleID, utils.NotFoundIfNoRows(err))
 	}
 
 	return updated, nil
@@ -170,17 +163,9 @@ func MarkScheduleRunTx(tx *sql.Tx, scheduleID int, nextRunAt time.Time) error {
 }
 
 func DeleteSchedule(botID, scheduleID int) error {
-	result, err := sqlite.DB.Exec("DELETE FROM schedules WHERE schedule_id = ? AND bot_id = ?", scheduleID, botID)
+	err := utils.RequireAffected(sqlite.DB.Exec("DELETE FROM schedules WHERE schedule_id = ? AND bot_id = ?", scheduleID, botID))
 	if err != nil {
 		return fmt.Errorf("error deleting schedule %d: %w", scheduleID, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking deleted schedule %d: %w", scheduleID, err)
-	}
-	if count == 0 {
-		return fmt.Errorf("error deleting schedule %d: %w", scheduleID, utils.ErrNotFound)
 	}
 
 	return nil

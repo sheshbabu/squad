@@ -1,6 +1,6 @@
 import Markdown from '../../commons/components/Markdown.jsx';
 import { FileIcon, CopyIcon, CheckIcon, ChevronRightIcon } from '../../commons/components/Icon.jsx';
-import showToast from '../../commons/components/Toast.jsx';
+import { COPIED_DURATION, copyText, isClipboardAvailable } from '../../commons/utils/clipboard.js';
 import formatDate from '../../commons/utils/formatDate.js';
 import { getSummaryLabel, getDoneLabel } from './toolLabels.js';
 import './MessageItem.css';
@@ -49,8 +49,6 @@ export function ToolActivity({ toolCalls, toolResultsById }) {
     </div>
   );
 }
-
-const COPIED_DURATION = 2000;
 
 function UserMessage({ message }) {
   const attachments = message.attachments.map(attachment => <Attachment key={attachment.attachmentId} attachment={attachment} />);
@@ -105,17 +103,14 @@ function MessageActions({ content, createdAt }) {
   }
 
   function handleCopyClick() {
-    navigator.clipboard.writeText(content)
-      .then(() => {
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), COPIED_DURATION);
-      })
-      .catch(() => showToast("Couldn't copy message."));
+    copyText(content, "Couldn't copy message.", () => {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), COPIED_DURATION);
+    });
   }
 
   let copyButton = null;
-  const isClipboardAvailable = typeof navigator.clipboard !== 'undefined';
-  if (isClipboardAvailable) {
+  if (isClipboardAvailable()) {
     let copyIcon = <CopyIcon />;
     if (isCopied) {
       copyIcon = <CheckIcon />;

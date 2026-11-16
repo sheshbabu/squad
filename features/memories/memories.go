@@ -3,13 +3,11 @@ package memories
 import (
 	"net/http"
 	"squad/commons/utils"
-	"strconv"
 )
 
 func HandleGetMemories(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -23,15 +21,13 @@ func HandleGetMemories(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteMemory(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
-	memoryID, err := strconv.Atoi(r.PathValue("memoryId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_MEMORY_ID", "Invalid memory", nil)
+	memoryID, ok := utils.ParsePathID(w, r, "memoryId", "INVALID_MEMORY_ID", "Invalid memory")
+	if !ok {
 		return
 	}
 

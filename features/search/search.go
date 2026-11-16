@@ -28,7 +28,7 @@ func buildMatchQuery(input string) string {
 	terms := []string{}
 
 	for i, word := range words {
-		term := `"` + strings.ReplaceAll(word, `"`, `""`) + `"`
+		term := quoteWord(word)
 		if i == len(words)-1 {
 			term += "*"
 		}
@@ -41,7 +41,11 @@ func buildMatchQuery(input string) string {
 func BuildAnyWordQuery(input string) string {
 	terms := []string{}
 	for _, word := range strings.Fields(input) {
-		terms = append(terms, `"`+strings.ReplaceAll(word, `"`, `""`)+`"`)
+		terms = append(terms, quoteWord(word))
 	}
 	return strings.Join(terms, " OR ")
+}
+
+func quoteWord(word string) string {
+	return `"` + strings.ReplaceAll(word, `"`, `""`) + `"`
 }

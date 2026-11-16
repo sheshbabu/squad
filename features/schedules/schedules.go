@@ -5,15 +5,13 @@ import (
 	"net/http"
 	"squad/commons/utils"
 	"squad/features/threads"
-	"strconv"
 	"strings"
 	"time"
 )
 
 func HandleGetSchedules(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -83,9 +81,8 @@ func HandleCreateSchedule(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleUpdateSchedule(w http.ResponseWriter, r *http.Request) {
-	scheduleID, err := strconv.Atoi(r.PathValue("scheduleId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_SCHEDULE_ID", "Invalid schedule", nil)
+	scheduleID, ok := utils.ParsePathID(w, r, "scheduleId", "INVALID_SCHEDULE_ID", "Invalid schedule")
+	if !ok {
 		return
 	}
 
@@ -105,15 +102,8 @@ func HandleUpdateSchedule(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteSchedule(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
-		return
-	}
-
-	scheduleID, err := strconv.Atoi(r.PathValue("scheduleId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_SCHEDULE_ID", "Invalid schedule", nil)
+	botID, scheduleID, ok := parseScheduleIDs(w, r)
+	if !ok {
 		return
 	}
 
@@ -126,15 +116,13 @@ func HandleDeleteSchedule(w http.ResponseWriter, r *http.Request) {
 }
 
 func parseScheduleIDs(w http.ResponseWriter, r *http.Request) (int, int, bool) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return 0, 0, false
 	}
 
-	scheduleID, err := strconv.Atoi(r.PathValue("scheduleId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_SCHEDULE_ID", "Invalid schedule", nil)
+	scheduleID, ok := utils.ParsePathID(w, r, "scheduleId", "INVALID_SCHEDULE_ID", "Invalid schedule")
+	if !ok {
 		return 0, 0, false
 	}
 
@@ -144,9 +132,8 @@ func parseScheduleIDs(w http.ResponseWriter, r *http.Request) (int, int, bool) {
 func decodeSchedule(w http.ResponseWriter, r *http.Request) (Schedule, bool) {
 	var schedule Schedule
 
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return schedule, false
 	}
 

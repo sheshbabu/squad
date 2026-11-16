@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"squad/commons/utils"
 	"squad/features/bots"
-	"strconv"
 )
 
 const maxAttachmentSize = 10 << 20
@@ -29,9 +28,8 @@ func GetAttachmentPath(attachment Attachment) string {
 }
 
 func HandleUploadAttachment(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -91,9 +89,8 @@ func HandleUploadAttachment(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleGetAttachment(w http.ResponseWriter, r *http.Request) {
-	attachmentID, err := strconv.Atoi(r.PathValue("attachmentId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_ATTACHMENT_ID", "Invalid attachment", nil)
+	attachmentID, ok := utils.ParsePathID(w, r, "attachmentId", "INVALID_ATTACHMENT_ID", "Invalid attachment")
+	if !ok {
 		return
 	}
 

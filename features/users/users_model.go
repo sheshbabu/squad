@@ -36,11 +36,8 @@ func GetUserByEmail(email string) (UserRecord, error) {
 	query := "SELECT user_id, email, password_hash FROM users WHERE email = ?"
 
 	err := sqlite.DB.QueryRow(query, email).Scan(&user.UserID, &user.Email, &user.PasswordHash)
-	if errors.Is(err, sql.ErrNoRows) {
-		return user, fmt.Errorf("error retrieving user: %w", utils.ErrNotFound)
-	}
 	if err != nil {
-		return user, fmt.Errorf("error retrieving user: %w", err)
+		return user, fmt.Errorf("error retrieving user: %w", utils.NotFoundIfNoRows(err))
 	}
 
 	return user, nil
@@ -52,11 +49,8 @@ func GetUserByID(userID int) (User, error) {
 	query := "SELECT user_id, email, about_me FROM users WHERE user_id = ?"
 
 	err := sqlite.DB.QueryRow(query, userID).Scan(&user.UserID, &user.Email, &user.AboutMe)
-	if errors.Is(err, sql.ErrNoRows) {
-		return user, fmt.Errorf("error retrieving user: %w", utils.ErrNotFound)
-	}
 	if err != nil {
-		return user, fmt.Errorf("error retrieving user: %w", err)
+		return user, fmt.Errorf("error retrieving user: %w", utils.NotFoundIfNoRows(err))
 	}
 
 	return user, nil
@@ -81,45 +75,26 @@ func GetUserRecordByID(userID int) (UserRecord, error) {
 	query := "SELECT user_id, email, password_hash FROM users WHERE user_id = ?"
 
 	err := sqlite.DB.QueryRow(query, userID).Scan(&user.UserID, &user.Email, &user.PasswordHash)
-	if errors.Is(err, sql.ErrNoRows) {
-		return user, fmt.Errorf("error retrieving user: %w", utils.ErrNotFound)
-	}
 	if err != nil {
-		return user, fmt.Errorf("error retrieving user: %w", err)
+		return user, fmt.Errorf("error retrieving user: %w", utils.NotFoundIfNoRows(err))
 	}
 
 	return user, nil
 }
 
 func UpdatePassword(userID int, passwordHash string) error {
-	result, err := sqlite.DB.Exec("UPDATE users SET password_hash = ? WHERE user_id = ?", passwordHash, userID)
+	err := utils.RequireAffected(sqlite.DB.Exec("UPDATE users SET password_hash = ? WHERE user_id = ?", passwordHash, userID))
 	if err != nil {
 		return fmt.Errorf("error updating password: %w", err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking updated password: %w", err)
-	}
-	if count == 0 {
-		return fmt.Errorf("error updating password: %w", utils.ErrNotFound)
 	}
 
 	return nil
 }
 
 func UpdateAboutMe(userID int, aboutMe string) error {
-	result, err := sqlite.DB.Exec("UPDATE users SET about_me = ? WHERE user_id = ?", aboutMe, userID)
+	err := utils.RequireAffected(sqlite.DB.Exec("UPDATE users SET about_me = ? WHERE user_id = ?", aboutMe, userID))
 	if err != nil {
 		return fmt.Errorf("error updating about me: %w", err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking updated about me: %w", err)
-	}
-	if count == 0 {
-		return fmt.Errorf("error updating about me: %w", utils.ErrNotFound)
 	}
 
 	return nil

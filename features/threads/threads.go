@@ -37,9 +37,8 @@ type MessagesResponse struct {
 }
 
 func HandleGetThreads(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -53,9 +52,8 @@ func HandleGetThreads(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleCreateThread(w http.ResponseWriter, r *http.Request) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
+	if !ok {
 		return
 	}
 
@@ -85,34 +83,41 @@ func HandleCreateThread(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleGetThread(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
 
-	thread, err := GetThread(threadID)
+	response, err := loadThreadResponse(threadID)
 	if err != nil {
 		utils.SendErrorResponse(w, http.StatusInternalServerError, "THREAD_READ_FAILED", "Failed to load chat", err)
 		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, response)
+}
+
+func loadThreadResponse(threadID int) (ThreadResponse, error) {
+	thread, err := GetThread(threadID)
+	if err != nil {
+		return ThreadResponse{}, err
 	}
 
 	messages, hasMore, err := GetTurns(threadID, 0)
 	if err != nil {
-		utils.SendErrorResponse(w, http.StatusInternalServerError, "THREAD_READ_FAILED", "Failed to load chat", err)
-		return
+		return ThreadResponse{}, err
 	}
 
 	replyEndpoints, err := GetReplyEndpoints(threadID)
 	if err != nil {
-		utils.SendErrorResponse(w, http.StatusInternalServerError, "THREAD_READ_FAILED", "Failed to load chat", err)
-		return
+		return ThreadResponse{}, err
 	}
 
-	utils.SendJSONResponse(w, http.StatusOK, ThreadResponse{Thread: thread, Messages: messages, HasMore: hasMore, ReplyEndpoints: replyEndpoints})
+	return ThreadResponse{Thread: thread, Messages: messages, HasMore: hasMore, ReplyEndpoints: replyEndpoints}, nil
 }
 
 func HandleGetMessages(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -133,7 +138,7 @@ func HandleGetMessages(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleSendMessage(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -161,7 +166,7 @@ func HandleSendMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRetryThread(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -182,7 +187,7 @@ func HandleRetryThread(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleCancelThread(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -240,7 +245,7 @@ func FinishCancelledRun(threadID int, partialContent string) error {
 }
 
 func HandleRenameThread(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -268,7 +273,7 @@ func HandleRenameThread(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleGetThreadUsage(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -283,7 +288,7 @@ func HandleGetThreadUsage(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteThread(w http.ResponseWriter, r *http.Request) {
-	threadID, ok := parseThreadID(w, r)
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
 	if !ok {
 		return
 	}
@@ -328,14 +333,4 @@ func decodeSendMessageRequest(w http.ResponseWriter, r *http.Request) (SendMessa
 	}
 
 	return payload, true
-}
-
-func parseThreadID(w http.ResponseWriter, r *http.Request) (int, bool) {
-	threadID, err := strconv.Atoi(r.PathValue("threadId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_THREAD_ID", "Invalid chat", nil)
-		return 0, false
-	}
-
-	return threadID, true
 }

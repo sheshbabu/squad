@@ -15,12 +15,7 @@ import (
 
 const maxAboutMeLength = 2000
 
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type CreateUserRequest struct {
+type Credentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -63,7 +58,7 @@ func HandleGetCurrentUser(w http.ResponseWriter, r *http.Request) {
 
 // HandleCreateUser only serves onboarding, since the app has a single user.
 func HandleCreateUser(w http.ResponseWriter, r *http.Request) {
-	var payload CreateUserRequest
+	var payload Credentials
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_REQUEST_BODY", "Invalid request data", nil)
 		return
@@ -113,7 +108,7 @@ func HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
-	var payload LoginRequest
+	var payload Credentials
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_REQUEST_BODY", "Invalid request data", nil)
 		return

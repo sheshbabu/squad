@@ -14,6 +14,14 @@ import (
 
 const maxOutputLength = 10000
 
+var secondsByTimeFilter = map[string]int64{
+	"hour":  3600,
+	"day":   86400,
+	"week":  604800,
+	"month": 2629800,
+	"year":  31556952,
+}
+
 type Tool struct {
 	Group       string
 	Name        string
@@ -180,4 +188,23 @@ func sendJSONRequest(ctx context.Context, method, url string, headers map[string
 	}
 
 	return nil
+}
+
+func clampLimit(value, defaultValue, maxValue int) int {
+	if value <= 0 {
+		return defaultValue
+	}
+	if value > maxValue {
+		return maxValue
+	}
+	return value
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if value != "" {
+			return value
+		}
+	}
+	return ""
 }

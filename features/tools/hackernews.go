@@ -100,8 +100,7 @@ func runHackerNewsSearch(ctx context.Context, bot bots.Bot, arguments string) (s
 	params.Set("tags", args.Tags)
 	params.Set("hitsPerPage", strconv.Itoa(clampLimit(args.Limit, 20, 50)))
 
-	seconds := map[string]int64{"hour": 3600, "day": 86400, "week": 604800, "month": 2629800, "year": 31556952}
-	if value, ok := seconds[args.TimeFilter]; ok {
+	if value, ok := secondsByTimeFilter[args.TimeFilter]; ok {
 		params.Set("numericFilters", fmt.Sprintf("created_at_i>%d", time.Now().Unix()-value))
 	}
 
@@ -219,23 +218,4 @@ func runHackerNewsComments(ctx context.Context, bot bots.Bot, arguments string) 
 	}
 
 	return strings.Join(lines, "\n"), nil
-}
-
-func clampLimit(value, defaultValue, maxValue int) int {
-	if value <= 0 {
-		return defaultValue
-	}
-	if value > maxValue {
-		return maxValue
-	}
-	return value
-}
-
-func firstNonEmpty(values ...string) string {
-	for _, value := range values {
-		if value != "" {
-			return value
-		}
-	}
-	return ""
 }

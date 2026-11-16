@@ -12,13 +12,6 @@ import (
 
 var exaBaseURL = "https://api.exa.ai"
 
-var secondsByTimeFilter = map[string]int64{
-	"day":   86400,
-	"week":  604800,
-	"month": 2629800,
-	"year":  31556952,
-}
-
 type exaResult struct {
 	Title         string   `json:"title"`
 	URL           string   `json:"url"`
@@ -59,18 +52,11 @@ func runWebSearch(ctx context.Context, bot bots.Bot, arguments string) (string, 
 		return "", err
 	}
 
-	// Exa charges extra for every result past 10.
-	if args.Limit <= 0 {
-		args.Limit = 5
-	}
-	if args.Limit > 10 {
-		args.Limit = 10
-	}
-
 	body := map[string]any{
-		"query":      args.Query,
-		"type":       "auto",
-		"numResults": args.Limit,
+		"query": args.Query,
+		"type":  "auto",
+		// Exa charges extra for every result past 10.
+		"numResults": clampLimit(args.Limit, 5, 10),
 		"contents":   map[string]any{"highlights": true},
 	}
 	if seconds, ok := secondsByTimeFilter[args.TimeFilter]; ok {

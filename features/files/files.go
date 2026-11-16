@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 	"squad/commons/utils"
-	"strconv"
 )
 
 type WriteFileRequest struct {
@@ -13,7 +12,7 @@ type WriteFileRequest struct {
 }
 
 func HandleGetFiles(w http.ResponseWriter, r *http.Request) {
-	botID, ok := parseBotID(w, r)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
 	if !ok {
 		return
 	}
@@ -28,7 +27,7 @@ func HandleGetFiles(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleGetFile(w http.ResponseWriter, r *http.Request) {
-	botID, ok := parseBotID(w, r)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
 	if !ok {
 		return
 	}
@@ -47,7 +46,7 @@ func HandleGetFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleWriteFile(w http.ResponseWriter, r *http.Request) {
-	botID, ok := parseBotID(w, r)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
 	if !ok {
 		return
 	}
@@ -79,7 +78,7 @@ func HandleWriteFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteFile(w http.ResponseWriter, r *http.Request) {
-	botID, ok := parseBotID(w, r)
+	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
 	if !ok {
 		return
 	}
@@ -95,14 +94,4 @@ func HandleDeleteFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func parseBotID(w http.ResponseWriter, r *http.Request) (int, bool) {
-	botID, err := strconv.Atoi(r.PathValue("botId"))
-	if err != nil {
-		utils.SendErrorResponse(w, http.StatusBadRequest, "INVALID_BOT_ID", "Invalid bot", nil)
-		return 0, false
-	}
-
-	return botID, true
 }
