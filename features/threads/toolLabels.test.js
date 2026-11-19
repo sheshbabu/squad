@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { getRunningLabel, getDoneLabel, getSummaryLabel } from './toolLabels.js';
+import { getRunningLabel, getDoneLabel, getSummaryLabel, getToolGroup } from './toolLabels.js';
 
 function toolCall(name, args) {
   return { function: { name, arguments: JSON.stringify(args) } };
@@ -26,4 +26,9 @@ test('done labels split the action from its detail', () => {
 test('summaries count the calls', () => {
   assert.equal(getSummaryLabel([toolCall('read_file', { name: 'a.md' })]), 'Used a tool');
   assert.equal(getSummaryLabel([toolCall('read_file', { name: 'a.md' }), toolCall('read_file', { name: 'b.md' })]), 'Used 2 tools');
+});
+
+test('tools map to their group for the icon', () => {
+  assert.equal(getToolGroup(toolCall('reddit_search', { query: 'x' })), 'reddit');
+  assert.equal(getToolGroup(toolCall('new_tool', {})), '');
 });

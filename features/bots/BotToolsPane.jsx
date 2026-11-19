@@ -4,20 +4,10 @@ import Toggle from '../../commons/components/Toggle.jsx';
 import Input from '../../commons/components/Input.jsx';
 import Button from '../../commons/components/Button.jsx';
 import showToast from '../../commons/components/Toast.jsx';
-import { DatabaseIcon, FileIcon, HistoryIcon, GlobeIcon, NewspaperIcon, NotepadIcon } from '../../commons/components/Icon.jsx';
+import ToolGroupIcon from '../../commons/components/ToolGroupIcon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 
 const { useState, useEffect } = React;
-
-const GROUP_ICONS = {
-  memory: <DatabaseIcon />,
-  files: <FileIcon />,
-  chats: <HistoryIcon />,
-  web: <GlobeIcon />,
-  hackernews: <NewspaperIcon />,
-  reddit: <NewspaperIcon />,
-  zen: <NotepadIcon />,
-};
 
 export default function BotToolsPane({ bot, onSaved }) {
   const [toolGroups, setToolGroups] = useState([]);
@@ -60,7 +50,7 @@ export default function BotToolsPane({ bot, onSaved }) {
     }
 
     return (
-      <SettingsRow key={group.groupId} icon={GROUP_ICONS[group.groupId]} label={group.name} description={description}>
+      <SettingsRow key={group.groupId} icon={<ToolGroupIcon groupId={group.groupId} />} label={group.name} description={description}>
         <Toggle isEnabled={isEnabled} isDisabled={!group.isAvailable} onChange={value => handleToggleChange(group.groupId, value)} />
       </SettingsRow>
     );

@@ -138,11 +138,9 @@ function ScheduleRuns({ botId, runs, onLinkClick }) {
 
     return (
       <div key={run.threadId} className="schedules-pane-run">
+        <span className={`schedules-pane-run-status ${status.className}`} title={status.label} />
         <Link className="schedules-pane-run-title" to={`/bots/${botId}/threads/${run.threadId}`} onClick={onLinkClick}>{run.title}</Link>
-        <span className="schedules-pane-run-meta">
-          <span className={`schedules-pane-run-status ${status.className}`}>{status.label}</span>
-          {formatDate(new Date(run.createdAt))}
-        </span>
+        <span className="schedules-pane-run-time">{formatDate(new Date(run.createdAt))}</span>
       </div>
     );
   });

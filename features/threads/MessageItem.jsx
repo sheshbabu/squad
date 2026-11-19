@@ -2,7 +2,8 @@ import Markdown from '../../commons/components/Markdown.jsx';
 import { FileIcon, CopyIcon, CheckIcon, ChevronRightIcon } from '../../commons/components/Icon.jsx';
 import { COPIED_DURATION, copyText, isClipboardAvailable } from '../../commons/utils/clipboard.js';
 import formatDate from '../../commons/utils/formatDate.js';
-import { getSummaryLabel, getDoneLabel } from './toolLabels.js';
+import ToolGroupIcon from '../../commons/components/ToolGroupIcon.jsx';
+import { getSummaryLabel, getDoneLabel, getToolGroup } from './toolLabels.js';
 import './MessageItem.css';
 
 const { useState } = React;
@@ -148,6 +149,7 @@ function ToolCall({ toolCall, result }) {
   return (
     <div className={`message-item-tool ${isExpanded ? "is-expanded" : ""}`}>
       <div className="message-item-tool-summary" onClick={handleToggleClick}>
+        <span className="message-item-tool-icon"><ToolGroupIcon groupId={getToolGroup(toolCall)} /></span>
         <span className="message-item-tool-label">{label}</span>
         <span className="message-item-tool-detail">{detail}</span>
         <ChevronRightIcon />
