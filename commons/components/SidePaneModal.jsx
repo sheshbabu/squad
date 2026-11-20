@@ -4,7 +4,7 @@ import './SidePaneModal.css';
 const { useState } = React;
 
 // Tabs are grouped so related panes sit together, with a divider between groups, as in Zen's settings.
-export default function SidePaneModal({ title, tabGroups, initialTabId }) {
+export default function SidePaneModal({ title, tabGroups, initialTabId, isLarge = false }) {
   const tabs = tabGroups.flat();
   const [activeTabId, setActiveTabId] = useState(initialTabId ?? tabs[0].id);
 
@@ -23,7 +23,7 @@ export default function SidePaneModal({ title, tabGroups, initialTabId }) {
 
   return (
     <ModalBackdrop onClose={closeModal}>
-      <ModalContainer className="side-pane-modal">
+      <ModalContainer className={`side-pane-modal ${isLarge ? "large" : ""}`}>
         <ModalHeader title={title} onClose={closeModal} />
         <div className="side-pane-modal-content">
           <div className="side-pane-modal-sidebar">{sidebar}</div>

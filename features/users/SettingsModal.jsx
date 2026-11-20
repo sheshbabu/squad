@@ -24,7 +24,7 @@ export default function SettingsModal({ bots, onBotCreated, onBotSaved, onBotDel
     ],
   ];
 
-  return <SidePaneModal title="Settings" tabGroups={tabGroups} />;
+  return <SidePaneModal title="Settings" tabGroups={tabGroups} isLarge />;
 }
 
 function BotsPane({ bots, onBotCreated, onBotSaved, onBotDeleted }) {

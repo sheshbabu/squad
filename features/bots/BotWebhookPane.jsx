@@ -1,5 +1,7 @@
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
 import Button from '../../commons/components/Button.jsx';
+import ConfirmModal from '../../commons/components/ConfirmModal.jsx';
+import { openModal } from '../../commons/components/Modal.jsx';
 import showToast from '../../commons/components/Toast.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 import { copyText, isClipboardAvailable } from '../../commons/utils/clipboard.js';
@@ -22,17 +24,11 @@ export default function BotWebhookPane({ bot, onSaved }) {
   }
 
   function handleRegenerateClick() {
-    if (!window.confirm("Regenerate the URL? The current one will stop working.")) {
-      return;
-    }
-    save(ApiClient.regenerateBotWebhook(bot.botId));
+    openModal(<ConfirmModal title="Regenerate URL" description="The current URL will stop working." confirmLabel="Regenerate" onConfirm={() => save(ApiClient.regenerateBotWebhook(bot.botId))} />);
   }
 
   function handleTurnOffClick() {
-    if (!window.confirm("Turn off the webhook? The current URL will stop working.")) {
-      return;
-    }
-    save(ApiClient.deleteBotWebhook(bot.botId));
+    openModal(<ConfirmModal title="Turn off webhook" description="The current URL will stop working." confirmLabel="Turn off" onConfirm={() => save(ApiClient.deleteBotWebhook(bot.botId))} />);
   }
 
   const url = `${window.location.origin}/api/hooks/${bot.webhookToken}/`;

@@ -1,5 +1,5 @@
 .connection-modal {
-    width: 440px;
+    width: 520px;
     max-width: calc(100vw - var(--spacing-8));
 
     .input-container input {

@@ -1,4 +1,5 @@
-import { closeModal } from '../../commons/components/Modal.jsx';
+import { openModal, closeModal } from '../../commons/components/Modal.jsx';
+import ConfirmModal from '../../commons/components/ConfirmModal.jsx';
 import SettingsSection from '../../commons/components/SettingsSection.jsx';
 import showToast from '../../commons/components/Toast.jsx';
 import Input from '../../commons/components/Input.jsx';
@@ -92,9 +93,11 @@ export default function BotForm({ bot, sections, onSaved, onDeleted }) {
   }
 
   function handleDeleteClick() {
-    if (!window.confirm(`Delete ${bot.name} with all its chats, files, memories and schedules?`)) {
-      return;
-    }
+    const description = <>{bot.name} and all its chats, files, memories and schedules will be <b>permanently deleted</b>.</>;
+    openModal(<ConfirmModal title="Delete bot" description={description} confirmLabel="Delete" onConfirm={deleteBot} />);
+  }
+
+  function deleteBot() {
     ApiClient.deleteBot(bot.botId).then(() => {
       closeModal();
       onDeleted();

@@ -1,5 +1,6 @@
 import Button from '../../commons/components/Button.jsx';
 import { openModal, closeModal } from '../../commons/components/Modal.jsx';
+import ConfirmModal from '../../commons/components/ConfirmModal.jsx';
 import Spinner from '../../commons/components/Spinner.jsx';
 import { BackIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
@@ -103,10 +104,8 @@ export default function FileView({ botId, fileName, onSaved, onDeleted }) {
   }
 
   function handleDeleteClick() {
-    if (!window.confirm(`Delete ${fileName}?`)) {
-      return;
-    }
-    ApiClient.deleteFile(botId, fileName).then(onDeleted);
+    const description = <>{fileName} will be <b>permanently deleted</b>.</>;
+    openModal(<ConfirmModal title="Delete file" description={description} confirmLabel="Delete" onConfirm={() => ApiClient.deleteFile(botId, fileName).then(onDeleted)} />);
   }
 
   function handleBackClick() {

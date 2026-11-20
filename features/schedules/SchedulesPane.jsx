@@ -2,7 +2,8 @@ import Button from '../../commons/components/Button.jsx';
 import Spinner from '../../commons/components/Spinner.jsx';
 import Toggle from '../../commons/components/Toggle.jsx';
 import Link from '../../commons/components/Link.jsx';
-import { closeModal } from '../../commons/components/Modal.jsx';
+import { openModal, closeModal } from '../../commons/components/Modal.jsx';
+import ConfirmModal from '../../commons/components/ConfirmModal.jsx';
 import { PencilIcon, TrashIcon, PlayIcon, HistoryIcon } from '../../commons/components/Icon.jsx';
 import ApiClient from '../../commons/http/ApiClient.js';
 import formatDate from '../../commons/utils/formatDate.js';
@@ -62,9 +63,11 @@ export default function SchedulesPane({ botId }) {
   }
 
   function handleDeleteClick(schedule) {
-    if (!window.confirm(`Delete the schedule "${schedule.name}"?`)) {
-      return;
-    }
+    const description = <>"{schedule.name}" will be <b>permanently deleted</b>.</>;
+    openModal(<ConfirmModal title="Delete schedule" description={description} confirmLabel="Delete" onConfirm={() => deleteSchedule(schedule)} />);
+  }
+
+  function deleteSchedule(schedule) {
     ApiClient.deleteSchedule(botId, schedule.scheduleId)
       .then(() => setSchedules(previous => previous.filter(item => item.scheduleId !== schedule.scheduleId)));
   }
