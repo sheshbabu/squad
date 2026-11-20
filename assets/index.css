@@ -365,7 +365,8 @@ svg.lucide {
         --detail-max-width: var(--detail-expanded-max-width);
 
         >.sidebar-container,
-        >.bot-page-list {
+        >.bot-page-list,
+        >.inbox-page-list {
             min-width: 0;
             width: 0;
             overflow: hidden;

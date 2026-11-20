@@ -24,7 +24,7 @@ import './ChatView.css';
 
 const { useState, useEffect, useRef, useLayoutEffect } = React;
 
-export default function ChatView({ bot, threadId, onThreadChange, onThreadDeleted }) {
+export default function ChatView({ bot, threadId, backPath, onThreadChange, onThreadDeleted }) {
   const { isChatExpanded, toggleChatExpanded } = useLayout();
   const [thread, setThread] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -45,7 +45,8 @@ export default function ChatView({ bot, threadId, onThreadChange, onThreadDelete
   function loadLatestTurns() {
     return ApiClient.getThread(threadId)
       .then(response => {
-        setThread(response.thread);
+        setThread({ ...response.thread, isUnread: false });
+        markReadIfUnread(response.thread.isUnread);
         setMessages(previous => mergeMessages(previous, response.messages));
         setReplyEndpoints(response.replyEndpoints);
 
@@ -56,6 +57,12 @@ export default function ChatView({ bot, threadId, onThreadChange, onThreadDelete
         }
       })
       .finally(() => setIsLoading(false));
+  }
+
+  function markReadIfUnread(isUnread) {
+    if (isUnread) {
+      ApiClient.markThreadRead(threadId);
+    }
   }
 
   useEffect(() => {
@@ -105,7 +112,10 @@ export default function ChatView({ bot, threadId, onThreadChange, onThreadDelete
         setPartialText("");
       }
     },
-    onStatus: data => setThread(previous => updateLoadedThread(previous, { status: data.status, errorMessage: data.errorMessage, updatedAt: new Date().toISOString() })),
+    onStatus: data => {
+      setThread(previous => updateLoadedThread(previous, { status: data.status, errorMessage: data.errorMessage, updatedAt: new Date().toISOString() }));
+      markReadIfUnread(data.isUnread);
+    },
     onThread: updated => setThread(previous => updateLoadedThread(previous, { title: updated.title })),
   });
 
@@ -187,7 +197,7 @@ export default function ChatView({ bot, threadId, onThreadChange, onThreadDelete
   }
 
   function handleBackClick() {
-    navigateTo(`/bots/${bot.botId}`);
+    navigateTo(backPath);
   }
 
   if (isLoading) {

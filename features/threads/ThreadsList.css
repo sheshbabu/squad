@@ -27,28 +27,57 @@
         }
 
         .threads-list-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
             font-weight: 500;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+
+            .threads-list-title-text {
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .threads-list-unread {
+                flex-shrink: 0;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: var(--blue-500);
+            }
         }
 
         .threads-list-subtext {
             display: flex;
-            justify-content: space-between;
+            gap: var(--spacing-2);
             margin-top: var(--spacing-1);
             font: var(--sm);
             color: var(--neutral-400);
-        }
 
-        .threads-list-status {
-            &.is-working {
-                color: var(--blue-500);
-                animation: threads-list-pulse 1.2s ease-in-out infinite;
+            .threads-list-label {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
+                &.is-working {
+                    color: var(--blue-500);
+                    animation: threads-list-pulse 1.2s ease-in-out infinite;
+                }
+
+                &.is-failed {
+                    color: var(--red-500);
+                }
+
+                &.bot {
+                    color: var(--palette-text, var(--neutral-400));
+                }
             }
 
-            &.is-failed {
-                color: var(--red-500);
+            .threads-list-time {
+                flex-shrink: 0;
+                margin-left: auto;
             }
         }
     }

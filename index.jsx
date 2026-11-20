@@ -8,6 +8,7 @@ import { AppProvider } from './commons/contexts/AppContext.jsx';
 import LoginPage from './features/users/LoginPage.jsx';
 import HomePage from './features/home/HomePage.jsx';
 import BotPage from './features/bots/BotPage.jsx';
+import InboxPage from './features/inbox/InboxPage.jsx';
 import SearchMenu from './features/search/SearchMenu.jsx';
 import ThemePreferences from './commons/preferences/ThemePreferences.js';
 
@@ -46,6 +47,8 @@ function App() {
       <OfflineIndicator />
       <Router>
         <Route path="/" component={HomePage} />
+        <Route path="/inbox" component={InboxPage} />
+        <Route path="/inbox/threads/:threadId" component={InboxPage} />
         <Route path="/bots/:botId" component={BotPage} />
         <Route path="/bots/:botId/new" component={BotPage} />
         <Route path="/bots/:botId/threads/:threadId" component={BotPage} />

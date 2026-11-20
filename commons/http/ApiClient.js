@@ -207,6 +207,10 @@ function createThread(botId, payload) {
   return request('POST', `/api/bots/${botId}/threads/`, payload);
 }
 
+function getInbox() {
+  return request('GET', '/api/inbox/');
+}
+
 function getThread(threadId) {
   return request('GET', `/api/threads/${threadId}/`);
 }
@@ -225,6 +229,10 @@ function retryThread(threadId) {
 
 function cancelThread(threadId) {
   return request('POST', `/api/threads/${threadId}/cancel/`);
+}
+
+function markThreadRead(threadId) {
+  return request('POST', `/api/threads/${threadId}/read/`);
 }
 
 function renameThread(threadId, title) {
@@ -285,11 +293,13 @@ export default {
   deleteSchedule,
   getThreads,
   createThread,
+  getInbox,
   getThread,
   getEarlierMessages,
   sendMessage,
   retryThread,
   cancelThread,
+  markThreadRead,
   renameThread,
   getThreadUsage,
   deleteThread,

@@ -26,6 +26,7 @@ type Thread struct {
 	Title        string    `json:"title"`
 	Status       string    `json:"status"`
 	ErrorMessage string    `json:"errorMessage"`
+	IsUnread     bool      `json:"isUnread"`
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
 }
@@ -34,11 +35,11 @@ type RunPayload struct {
 	ThreadID int `json:"threadId"`
 }
 
-const threadColumns = "thread_id, bot_id, schedule_id, title, status, error_message, created_at, updated_at"
+const threadColumns = "thread_id, bot_id, schedule_id, title, status, error_message, is_unread, created_at, updated_at"
 
 func scanThread(row interface{ Scan(...any) error }) (Thread, error) {
 	var thread Thread
-	err := row.Scan(&thread.ThreadID, &thread.BotID, &thread.ScheduleID, &thread.Title, &thread.Status, &thread.ErrorMessage, &thread.CreatedAt, &thread.UpdatedAt)
+	err := row.Scan(&thread.ThreadID, &thread.BotID, &thread.ScheduleID, &thread.Title, &thread.Status, &thread.ErrorMessage, &thread.IsUnread, &thread.CreatedAt, &thread.UpdatedAt)
 	return thread, err
 }
 
@@ -48,11 +49,21 @@ func GetRunKey(threadID int) string {
 }
 
 func GetThreads(botID int) ([]Thread, error) {
+	return queryThreads("SELECT "+threadColumns+" FROM threads WHERE bot_id = ? ORDER BY updated_at DESC, thread_id DESC LIMIT 50", botID)
+}
+
+func GetScheduleThreads(scheduleID int) ([]Thread, error) {
+	return queryThreads("SELECT "+threadColumns+" FROM threads WHERE schedule_id = ? ORDER BY created_at DESC, thread_id DESC LIMIT 20", scheduleID)
+}
+
+func GetUnreadThreads() ([]Thread, error) {
+	return queryThreads("SELECT " + threadColumns + " FROM threads WHERE is_unread = 1 ORDER BY updated_at DESC, thread_id DESC")
+}
+
+func queryThreads(query string, args ...any) ([]Thread, error) {
 	threads := []Thread{}
 
-	query := "SELECT " + threadColumns + " FROM threads WHERE bot_id = ? ORDER BY updated_at DESC, thread_id DESC LIMIT 50"
-
-	rows, err := sqlite.DB.Query(query, botID)
+	rows, err := sqlite.DB.Query(query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving threads: %w", err)
 	}
@@ -68,32 +79,6 @@ func GetThreads(botID int) ([]Thread, error) {
 
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error iterating threads: %w", err)
-	}
-
-	return threads, nil
-}
-
-func GetScheduleThreads(scheduleID int) ([]Thread, error) {
-	threads := []Thread{}
-
-	query := "SELECT " + threadColumns + " FROM threads WHERE schedule_id = ? ORDER BY created_at DESC, thread_id DESC LIMIT 20"
-
-	rows, err := sqlite.DB.Query(query, scheduleID)
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving schedule threads: %w", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		thread, err := scanThread(rows)
-		if err != nil {
-			return nil, fmt.Errorf("error scanning schedule thread: %w", err)
-		}
-		threads = append(threads, thread)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating schedule threads: %w", err)
 	}
 
 	return threads, nil
@@ -242,6 +227,16 @@ func setThreadStatus(execer interface {
 	_, err := execer.Exec(query, status, errorMessage, threadID)
 	if err != nil {
 		return fmt.Errorf("error updating thread %d status: %w", threadID, err)
+	}
+
+	return nil
+}
+
+// The read state leaves updated_at alone, so opening a chat doesn't move it up the list.
+func SetThreadUnread(threadID int, isUnread bool) error {
+	err := utils.RequireAffected(sqlite.DB.Exec("UPDATE threads SET is_unread = ? WHERE thread_id = ?", isUnread, threadID))
+	if err != nil {
+		return fmt.Errorf("error updating thread %d read state: %w", threadID, err)
 	}
 
 	return nil

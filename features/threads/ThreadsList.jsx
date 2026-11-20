@@ -2,19 +2,15 @@ import Link from '../../commons/components/Link.jsx';
 import formatDate from '../../commons/utils/formatDate.js';
 import './ThreadsList.css';
 
-export default function ThreadsList({ botId, threads, selectedThreadId }) {
+export default function ThreadsList({ threads, selectedThreadId, basePath, emptyText, bots }) {
   if (threads.length === 0) {
-    return <div className="threads-list is-empty">No chats yet</div>;
+    return <div className="threads-list is-empty">{emptyText}</div>;
   }
 
   const items = threads.map(thread => {
-    let statusElement = null;
-    if (thread.status === "working") {
-      statusElement = <span className="threads-list-status is-working">Replying</span>;
-    } else if (thread.status === "failed") {
-      statusElement = <span className="threads-list-status is-failed">Failed</span>;
-    } else if (thread.scheduleId !== null) {
-      statusElement = <span className="threads-list-status">Scheduled</span>;
+    let unreadDot = null;
+    if (thread.isUnread) {
+      unreadDot = <span className="threads-list-unread" title="Unread" />;
     }
 
     return (
@@ -23,15 +19,39 @@ export default function ThreadsList({ botId, threads, selectedThreadId }) {
         className="threads-list-item"
         activeClassName="is-active"
         isActive={thread.threadId === selectedThreadId}
-        to={`/bots/${botId}/threads/${thread.threadId}`}>
-        <div className="threads-list-title">{thread.title}</div>
+        to={`${basePath}/${thread.threadId}`}>
+        <div className="threads-list-title">
+          <span className="threads-list-title-text">{thread.title}</span>
+          {unreadDot}
+        </div>
         <div className="threads-list-subtext">
-          <span>{formatDate(new Date(thread.updatedAt))}</span>
-          {statusElement}
+          {renderLabel(thread, bots)}
+          <span className="threads-list-time">{formatDate(new Date(thread.updatedAt))}</span>
         </div>
       </Link>
     );
   });
 
   return <div className="threads-list">{items}</div>;
+}
+
+function renderLabel(thread, bots) {
+  if (bots !== undefined) {
+    const bot = bots.find(item => item.botId === thread.botId);
+    if (bot === undefined) {
+      return null;
+    }
+    return <span className={`threads-list-label bot color-${bot.color}`}>{bot.name}</span>;
+  }
+
+  if (thread.status === "working") {
+    return <span className="threads-list-label is-working">Replying</span>;
+  }
+  if (thread.status === "failed") {
+    return <span className="threads-list-label is-failed">Failed</span>;
+  }
+  if (thread.scheduleId !== null) {
+    return <span className="threads-list-label">Scheduled</span>;
+  }
+  return null;
 }

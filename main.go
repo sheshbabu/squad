@@ -129,6 +129,7 @@ func newRouter() *http.ServeMux {
 	addSessionRoute(mux, "POST /api/bots/{botId}/schedules/{scheduleId}/run/", schedules.HandleRunSchedule)
 	addSessionRoute(mux, "GET /api/bots/{botId}/schedules/{scheduleId}/threads/", schedules.HandleGetScheduleThreads)
 
+	addSessionRoute(mux, "GET /api/inbox/", threads.HandleGetInbox)
 	addSessionRoute(mux, "GET /api/bots/{botId}/threads/", threads.HandleGetThreads)
 	addSessionRoute(mux, "POST /api/bots/{botId}/threads/", threads.HandleCreateThread)
 	addSessionRoute(mux, "POST /api/bots/{botId}/attachments/", threads.HandleUploadAttachment)
@@ -141,6 +142,7 @@ func newRouter() *http.ServeMux {
 	addSessionRoute(mux, "POST /api/threads/{threadId}/messages/", threads.HandleSendMessage)
 	addSessionRoute(mux, "POST /api/threads/{threadId}/retry/", threads.HandleRetryThread)
 	addSessionRoute(mux, "POST /api/threads/{threadId}/cancel/", threads.HandleCancelThread)
+	addSessionRoute(mux, "POST /api/threads/{threadId}/read/", threads.HandleMarkThreadRead)
 	addSessionRoute(mux, "GET /api/threads/{threadId}/events/", threads.HandleThreadEvents)
 
 	addSessionRoute(mux, "GET /api/search/", search.HandleSearch)

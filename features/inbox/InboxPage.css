@@ -1,0 +1,50 @@
+.inbox-page {
+    .inbox-page-list {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        width: var(--list-width);
+        height: 100%;
+
+        /* The bot page header gets its height from icon buttons, so this one sets it to line up when switching pages. */
+        .inbox-page-header {
+            display: flex;
+            align-items: center;
+            height: 28px;
+            margin: 18px var(--spacing-3) var(--spacing-3);
+            padding-left: var(--spacing-1);
+            font-weight: 600;
+        }
+    }
+
+    .inbox-page-detail {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        border-left: 1px solid var(--neutral-100);
+    }
+}
+
+@media screen and (max-width: 948px) {
+    .inbox-page {
+        .inbox-page-list {
+            width: 100%;
+            height: calc(100% - (var(--mobile-navbar-height) + var(--safe-area-bottom)));
+
+            &.has-detail {
+                display: none;
+            }
+        }
+
+        .inbox-page-detail {
+            height: calc(100% - var(--safe-area-bottom));
+            border-left: none;
+
+            &:not(.has-detail) {
+                display: none;
+            }
+        }
+    }
+}

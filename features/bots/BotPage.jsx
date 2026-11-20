@@ -118,8 +118,8 @@ function BotPageContent({ botId, threadId, fileName }) {
 
   const hasDetail = threadId !== undefined || fileName !== undefined || isNewChat;
 
-  let listContent = <ThreadsList botId={botId} threads={threads} selectedThreadId={threadId} />;
-  let detailContent = <ChatView key={threadId ?? "new"} bot={bot} threadId={threadId} onThreadChange={handleThreadChange} onThreadDeleted={handleThreadDeleted} />;
+  let listContent = <ThreadsList threads={threads} selectedThreadId={threadId} basePath={`/bots/${botId}/threads`} emptyText="No chats yet" />;
+  let detailContent = <ChatView key={threadId ?? "new"} bot={bot} threadId={threadId} backPath={`/bots/${botId}`} onThreadChange={handleThreadChange} onThreadDeleted={handleThreadDeleted} />;
 
   if (isFilesView) {
     listContent = <FilesList botId={botId} files={files} selectedFileName={fileName} />;

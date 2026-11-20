@@ -12,6 +12,16 @@ export default function MobileNavbar({ currentBotId }) {
     openModal(<SearchMenu />);
   }
 
+  let newChatLink = null;
+  if (currentBotId !== undefined) {
+    newChatLink = (
+      <Link className="mobile-navbar-button" to={`/bots/${currentBotId}/new`}>
+        <NewIcon />
+        New
+      </Link>
+    );
+  }
+
   return (
     <div className="mobile-navbar">
       <div className="mobile-navbar-bar">
@@ -23,10 +33,7 @@ export default function MobileNavbar({ currentBotId }) {
           <SearchIcon />
           Search
         </div>
-        <Link className="mobile-navbar-button" to={`/bots/${currentBotId}/new`}>
-          <NewIcon />
-          New
-        </Link>
+        {newChatLink}
       </div>
     </div>
   );

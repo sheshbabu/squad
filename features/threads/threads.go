@@ -51,6 +51,16 @@ func HandleGetThreads(w http.ResponseWriter, r *http.Request) {
 	utils.SendJSONResponse(w, http.StatusOK, threads)
 }
 
+func HandleGetInbox(w http.ResponseWriter, r *http.Request) {
+	threads, err := GetUnreadThreads()
+	if err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "UNREAD_THREADS_READ_FAILED", "Failed to load unread chats", err)
+		return
+	}
+
+	utils.SendJSONResponse(w, http.StatusOK, threads)
+}
+
 func HandleCreateThread(w http.ResponseWriter, r *http.Request) {
 	botID, ok := utils.ParsePathID(w, r, "botId", "INVALID_BOT_ID", "Invalid bot")
 	if !ok {
@@ -242,6 +252,20 @@ func FinishCancelledRun(threadID int, partialContent string) error {
 	PublishStatus(threadID)
 
 	return nil
+}
+
+func HandleMarkThreadRead(w http.ResponseWriter, r *http.Request) {
+	threadID, ok := utils.ParsePathID(w, r, "threadId", "INVALID_THREAD_ID", "Invalid chat")
+	if !ok {
+		return
+	}
+
+	if err := SetThreadUnread(threadID, false); err != nil {
+		utils.SendErrorResponse(w, http.StatusInternalServerError, "THREAD_READ_FAILED", "Failed to mark chat as read", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func HandleRenameThread(w http.ResponseWriter, r *http.Request) {

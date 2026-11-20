@@ -82,6 +82,9 @@ func handleAgentFailed(payload string, err error) {
 		slog.Error("error marking thread failed", "threadID", threadID, "error", err)
 		return
 	}
+	if err := threads.SetThreadUnread(threadID, true); err != nil {
+		slog.Error("error marking failed thread unread", "threadID", threadID, "error", err)
+	}
 	threads.PublishStatus(threadID)
 }
 
@@ -206,6 +209,9 @@ func callModel(ctx context.Context, gateway llm.Gateway, bot bots.Bot, thread th
 
 func finishRun(thread threads.Thread) error {
 	if err := threads.SetThreadStatus(thread.ThreadID, threads.STATUS_IDLE, ""); err != nil {
+		return err
+	}
+	if err := threads.SetThreadUnread(thread.ThreadID, true); err != nil {
 		return err
 	}
 	threads.PublishStatus(thread.ThreadID)

@@ -135,6 +135,9 @@ func TestRunCallsToolThenAnswers(t *testing.T) {
 	if thread.Status != threads.STATUS_IDLE || fake.requests != 2 {
 		t.Fatalf("expected idle after 2 requests, got %s after %d", thread.Status, fake.requests)
 	}
+	if !thread.IsUnread {
+		t.Fatal("expected a finished reply to mark the thread unread")
+	}
 
 	var titleJobs int
 	sqlite.DB.QueryRow("SELECT COUNT(*) FROM jobs WHERE kind = ?", threads.JOB_THREAD_TITLE).Scan(&titleJobs)
@@ -181,8 +184,8 @@ func TestClientErrorFailsPermanently(t *testing.T) {
 
 	handleAgentFailed(getPayload(threadID), err)
 	thread, _ := threads.GetThread(threadID)
-	if thread.Status != threads.STATUS_FAILED || thread.ErrorMessage != "No auth credentials found" {
-		t.Fatalf("unexpected thread state %s %q", thread.Status, thread.ErrorMessage)
+	if thread.Status != threads.STATUS_FAILED || thread.ErrorMessage != "No auth credentials found" || !thread.IsUnread {
+		t.Fatalf("unexpected thread state %s %q unread=%v", thread.Status, thread.ErrorMessage, thread.IsUnread)
 	}
 }
 
@@ -220,8 +223,8 @@ func TestCancelKeepsPartialText(t *testing.T) {
 	}
 
 	thread, _ := threads.GetThread(threadID)
-	if thread.Status != threads.STATUS_IDLE {
-		t.Fatalf("expected idle after cancel, got %s", thread.Status)
+	if thread.Status != threads.STATUS_IDLE || thread.IsUnread {
+		t.Fatalf("expected idle and read after cancel, got %s unread=%v", thread.Status, thread.IsUnread)
 	}
 }
 

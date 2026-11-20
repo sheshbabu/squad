@@ -4,14 +4,14 @@ import SearchMenu from "../../features/search/SearchMenu.jsx";
 import SettingsModal from "../../features/users/SettingsModal.jsx";
 import BotSettingsModal from "../../features/bots/BotSettingsModal.jsx";
 import { openModal } from "./Modal.jsx";
-import { SearchIcon, SettingsIcon, PencilIcon } from "./Icon.jsx";
+import { InboxIcon, SearchIcon, SettingsIcon, PencilIcon } from "./Icon.jsx";
 import navigateTo from "../utils/navigateTo.js";
 import isMobile from "../utils/isMobile.js";
 import { useAppContext } from "../contexts/AppContext.jsx";
 import { useLayout } from "../contexts/LayoutContext.jsx";
 import "./Sidebar.css";
 
-export default function Sidebar({ currentBotId }) {
+export default function Sidebar({ currentBotId, isInboxActive }) {
   const { bots, refreshBots } = useAppContext();
   const { isSidebarOpen, closeSidebar } = useLayout();
 
@@ -37,7 +37,7 @@ export default function Sidebar({ currentBotId }) {
     openModal(<BotSettingsModal bot={bot} onSaved={refreshBots} onDeleted={handleBotDeleted} />);
   }
 
-  function handleBotClick() {
+  function handleLinkClick() {
     if (isMobile()) {
       closeSidebar();
     }
@@ -54,7 +54,7 @@ export default function Sidebar({ currentBotId }) {
         activeClassName="is-active"
         isActive={bot.botId === currentBotId}
         to={`/bots/${bot.botId}`}
-        onClick={handleBotClick}>
+        onClick={handleLinkClick}>
         <BotAvatar name={bot.icon} />
         <span className="sidebar-bot-name">{bot.name}</span>
       </Link>
@@ -67,6 +67,10 @@ export default function Sidebar({ currentBotId }) {
       <div className={`sidebar-backdrop-container ${isSidebarOpen ? 'is-open' : ''}`} onClick={handleBackdropClick}>&nbsp;</div>
       <div className={`sidebar-container ${isSidebarOpen ? 'is-open' : ''}`}>
         <div className="sidebar-fixed">
+          <Link className="sidebar-button inbox" activeClassName="is-active" isActive={isInboxActive} to="/inbox" onClick={handleLinkClick}>
+            <InboxIcon />
+            Inbox
+          </Link>
           <div className="sidebar-button search" onClick={handleSearchClick}>
             <SearchIcon />
             Search

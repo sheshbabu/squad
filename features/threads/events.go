@@ -76,7 +76,7 @@ func PublishStatus(threadID int) {
 		return
 	}
 
-	stream.Publish(threadID, stream.Event{Type: "status", Data: map[string]string{"status": thread.Status, "errorMessage": thread.ErrorMessage}})
+	stream.Publish(threadID, stream.Event{Type: "status", Data: map[string]any{"status": thread.Status, "errorMessage": thread.ErrorMessage, "isUnread": thread.IsUnread}})
 }
 
 func PublishThread(thread Thread) {
