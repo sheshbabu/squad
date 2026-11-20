@@ -37,6 +37,11 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 		}
 	}
 
+	toolDefinitions, err := tools.GetDefinitions(bot)
+	if err != nil {
+		return llm.Request{}, err
+	}
+
 	llmMessages := []llm.Message{{Role: "system", Content: buildSystemPrompt(bot, thread, aboutMe, memoryList, fileList)}}
 
 	currentTurnStart := 0
@@ -64,7 +69,7 @@ func buildRequest(bot bots.Bot, thread threads.Thread, messages []threads.Messag
 		}
 	}
 
-	return llm.Request{Model: bot.Model, Provider: bot.Provider, ReasoningEffort: bot.ReasoningEffort, User: GetGatewayUser(bot.BotID), Messages: llmMessages, Tools: tools.GetDefinitions(bot)}, nil
+	return llm.Request{Model: bot.Model, Provider: bot.Provider, ReasoningEffort: bot.ReasoningEffort, User: GetGatewayUser(bot.BotID), Messages: llmMessages, Tools: toolDefinitions}, nil
 }
 
 func buildSystemPrompt(bot bots.Bot, thread threads.Thread, aboutMe string, memoryList []memories.Memory, fileList []files.File) string {

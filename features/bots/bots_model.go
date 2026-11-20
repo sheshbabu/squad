@@ -21,18 +21,17 @@ type Bot struct {
 	UsesAboutMe     bool   `json:"usesAboutMe"`
 	// Groups are stored as turned off rather than on, so every available tool starts enabled, including ones added later.
 	DisabledToolGroups []string  `json:"disabledToolGroups"`
-	ZenAPIToken        string    `json:"zenApiToken"`
 	WebhookToken       string    `json:"webhookToken"`
 	CreatedAt          time.Time `json:"createdAt"`
 	UpdatedAt          time.Time `json:"updatedAt"`
 }
 
-const botColumns = "bot_id, name, icon, color, system_prompt, gateway, model, provider, reasoning_effort, uses_about_me, disabled_tool_groups, zen_api_token, webhook_token, created_at, updated_at"
+const botColumns = "bot_id, name, icon, color, system_prompt, gateway, model, provider, reasoning_effort, uses_about_me, disabled_tool_groups, webhook_token, created_at, updated_at"
 
 func scanBot(row interface{ Scan(...any) error }) (Bot, error) {
 	var bot Bot
 	var disabledToolGroups string
-	err := row.Scan(&bot.BotID, &bot.Name, &bot.Icon, &bot.Color, &bot.SystemPrompt, &bot.Gateway, &bot.Model, &bot.Provider, &bot.ReasoningEffort, &bot.UsesAboutMe, &disabledToolGroups, &bot.ZenAPIToken, &bot.WebhookToken, &bot.CreatedAt, &bot.UpdatedAt)
+	err := row.Scan(&bot.BotID, &bot.Name, &bot.Icon, &bot.Color, &bot.SystemPrompt, &bot.Gateway, &bot.Model, &bot.Provider, &bot.ReasoningEffort, &bot.UsesAboutMe, &disabledToolGroups, &bot.WebhookToken, &bot.CreatedAt, &bot.UpdatedAt)
 	bot.DisabledToolGroups = parseToolGroups(disabledToolGroups)
 	return bot, err
 }
@@ -109,14 +108,14 @@ func UpdateBot(bot Bot) (Bot, error) {
 	return updated, nil
 }
 
-func UpdateBotTools(botID int, disabledToolGroups []string, zenAPIToken string) (Bot, error) {
+func UpdateBotTools(botID int, disabledToolGroups []string) (Bot, error) {
 	query := `
 		UPDATE bots
-		SET disabled_tool_groups = ?, zen_api_token = ?, updated_at = CURRENT_TIMESTAMP
+		SET disabled_tool_groups = ?, updated_at = CURRENT_TIMESTAMP
 		WHERE bot_id = ?
 		RETURNING ` + botColumns
 
-	updated, err := scanBot(sqlite.DB.QueryRow(query, strings.Join(disabledToolGroups, ","), zenAPIToken, botID))
+	updated, err := scanBot(sqlite.DB.QueryRow(query, strings.Join(disabledToolGroups, ","), botID))
 	if err != nil {
 		return updated, fmt.Errorf("error updating bot %d tools: %w", botID, utils.NotFoundIfNoRows(err))
 	}

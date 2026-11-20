@@ -16,6 +16,7 @@ import (
 	"squad/commons/utils"
 	"squad/features/agent"
 	"squad/features/bots"
+	"squad/features/connections"
 	"squad/features/files"
 	"squad/features/gateways"
 	"squad/features/memories"
@@ -111,6 +112,10 @@ func newRouter() *http.ServeMux {
 	addSessionRoute(mux, "DELETE /api/bots/{botId}/webhook/", bots.HandleDeleteBotWebhook)
 	addPublicRoute(mux, "POST /api/hooks/{token}/", threads.HandleReceiveWebhook)
 	addSessionRoute(mux, "GET /api/tools/", tools.HandleGetToolGroups)
+	addSessionRoute(mux, "GET /api/bots/{botId}/connections/", connections.HandleGetConnections)
+	addSessionRoute(mux, "POST /api/bots/{botId}/connections/", connections.HandleCreateConnection)
+	addSessionRoute(mux, "PUT /api/bots/{botId}/connections/{connectionId}/", connections.HandleUpdateConnection)
+	addSessionRoute(mux, "DELETE /api/bots/{botId}/connections/{connectionId}/", connections.HandleDeleteConnection)
 
 	addSessionRoute(mux, "GET /api/bots/{botId}/memories/", memories.HandleGetMemories)
 	addSessionRoute(mux, "DELETE /api/bots/{botId}/memories/{memoryId}/", memories.HandleDeleteMemory)

@@ -76,6 +76,7 @@ if (name) { ... }
 
 ## Modal Patterns
 - Open with `openModal(<X />)` from `commons/components/Modal.jsx`, which renders into its own root in `.modal-root`
+- Modals stack: `openModal` while one is open shows the new one on top, `closeModal` closes the top one and `closeAllModals` closes them all
 - Modals sit outside the app's context providers, so pass data and callbacks (`onSaved`, `onDeleted`) as props
 - Build them from `ModalBackdrop`, `ModalContainer`, `ModalHeader`, `ModalContent`, `ModalFooter`
 

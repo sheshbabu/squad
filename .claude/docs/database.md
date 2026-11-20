@@ -7,7 +7,7 @@
 
 ## Schema & Migrations
 - Migrations are sequential SQL files in `./migrations/` with format `<version>_<title>.sql`
-- Main tables: users, sessions, bots, threads, messages, attachments, memories, schedules, jobs, and `messages_fts` (kept in sync by triggers, user and assistant messages only)
+- Main tables: users, sessions, bots, threads, messages, attachments, memories, schedules, connections, jobs, and `messages_fts` (kept in sync by triggers, user and assistant messages only)
 - Timestamps compared in SQL are stored in UTC in SQLite's `YYYY-MM-DD HH:MM:SS` format so they compare against `CURRENT_TIMESTAMP`
 
 ## Query Patterns

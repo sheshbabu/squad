@@ -3,6 +3,8 @@ package utils
 import (
 	"database/sql"
 	"errors"
+
+	"github.com/mattn/go-sqlite3"
 )
 
 func NotFoundIfNoRows(err error) error {
@@ -27,4 +29,9 @@ func RequireAffected(result sql.Result, err error) error {
 	}
 
 	return nil
+}
+
+func IsUniqueViolation(err error) bool {
+	var sqliteErr sqlite3.Error
+	return errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique
 }

@@ -9,6 +9,7 @@
   - `threads/` - Threads, messages, attachments, the SSE endpoint and the chat UI
   - `agent/` - The agent loop, context building and thread titles
   - `tools/` - Tools bots can call (memory, files, fetch, Exa, Hacker News, Reddit, Zen)
+  - `connections/` - Per-bot secrets that unlock tool groups, like Zen API tokens
   - `memories/`, `files/`, `schedules/`, `search/`
 - **Commons**: `sqlite/`, `utils/`, `session/`, `auth/`, `queue/` (durable job queue), `llm/` (gateways and stream client), `stream/` (SSE hub), plus frontend `components/`, `contexts/`, `http/ApiClient.js`
 
@@ -36,7 +37,7 @@ The scheduler checks every 30s for due schedules, then creates a new thread with
 - `DATA_FOLDER` - Database, bot folders and attachments (default: `./data`)
 - `TZ` - Time zone for schedules and the date in prompts
 - `OPENROUTER_API_KEY` - The OpenRouter gateway
-- `EXA_API_KEY`, `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD`, `REDDIT_USER_AGENT`, `ZEN_URL` - Tools, each hidden until its keys are set. Each bot can turn tool groups off and holds its own Zen API token
+- `EXA_API_KEY`, `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD`, `REDDIT_USER_AGENT`, `ZEN_URL` - Tools, each hidden until its keys are set. Each bot can turn tool groups off, and groups like Zen need a connection (name plus secret) on the bot, which can have several
 
 ## Background Tasks
 - Queue workers (continuous)

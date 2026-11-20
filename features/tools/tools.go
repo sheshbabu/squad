@@ -6,9 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
+	"slices"
 	"squad/commons/llm"
 	"squad/features/bots"
+	"squad/features/connections"
 	"time"
 )
 
@@ -53,19 +56,44 @@ func register(group string, tool Tool) {
 	registryOrder = append(registryOrder, tool.Name)
 }
 
-func GetDefinitions(bot bots.Bot) []llm.Tool {
+func GetDefinitions(bot bots.Bot) ([]llm.Tool, error) {
+	botConnections, err := connections.GetConnections(bot.BotID)
+	if err != nil {
+		return nil, err
+	}
+
 	definitions := []llm.Tool{}
 	for _, name := range registryOrder {
 		tool := registry[name]
-		if !IsGroupEnabled(bot, tool.Group) {
+		if !isGroupEnabled(bot, botConnections, tool.Group) {
 			continue
 		}
+
+		parameters := tool.Parameters
+		groupConnections := getGroupConnections(botConnections, tool.Group)
+		if len(groupConnections) > 1 {
+			parameters = addConnectionParameter(parameters, groupConnections)
+		}
+
 		definitions = append(definitions, llm.Tool{
 			Type:     "function",
-			Function: llm.ToolFunction{Name: tool.Name, Description: tool.Description, Parameters: tool.Parameters},
+			Function: llm.ToolFunction{Name: tool.Name, Description: tool.Description, Parameters: parameters},
 		})
 	}
-	return definitions
+	return definitions, nil
+}
+
+func addConnectionParameter(parameters map[string]any, groupConnections []connections.Connection) map[string]any {
+	names := []string{}
+	for _, connection := range groupConnections {
+		names = append(names, connection.Name)
+	}
+
+	properties := maps.Clone(parameters["properties"].(map[string]any))
+	properties["connection"] = enumProperty("Which connection to use.", names...)
+	required := append(slices.Clone(parameters["required"].([]string)), "connection")
+
+	return objectSchema(properties, required...)
 }
 
 // Run never fails the agent run, because a tool error is information the model can act on.
@@ -75,8 +103,13 @@ func Run(ctx context.Context, bot bots.Bot, toolCall llm.ToolCall) string {
 		return fmt.Sprintf("Error: unknown tool %q", toolCall.Function.Name)
 	}
 
+	botConnections, err := connections.GetConnections(bot.BotID)
+	if err != nil {
+		return "Error: " + err.Error()
+	}
+
 	// Earlier replies in the chat may show a tool that has since been turned off, and the model can still try to call it.
-	if !IsGroupEnabled(bot, tool.Group) {
+	if !isGroupEnabled(bot, botConnections, tool.Group) {
 		return fmt.Sprintf("Error: tool %q is turned off for this bot", toolCall.Function.Name)
 	}
 

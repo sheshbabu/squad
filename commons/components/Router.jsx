@@ -1,3 +1,5 @@
+import { closeAllModals } from './Modal.jsx';
+
 const { useEffect, useState } = React;
 
 export default function Router({ children }) {
@@ -5,6 +7,7 @@ export default function Router({ children }) {
 
   useEffect(() => {
     function handleLocationChange() {
+      closeAllModals();
       setCurrentPath(window.location.pathname);
     }
 

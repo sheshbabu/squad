@@ -1,0 +1,13 @@
+.connection-modal {
+    width: 440px;
+    max-width: calc(100vw - var(--spacing-8));
+
+    .input-container input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .connection-modal-buttons {
+        display: flex;
+    }
+}

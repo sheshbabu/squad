@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"squad/commons/llm"
+	"squad/commons/testutil"
 	"squad/features/bots"
+	"squad/features/connections"
 	"strings"
 	"testing"
 )
@@ -99,37 +102,86 @@ func TestRedditRefreshesTokenOnce(t *testing.T) {
 	}
 }
 
+func setupZenBot(t *testing.T, zenURL string, tokensByName map[string]string) bots.Bot {
+	t.Helper()
+	testutil.SetupDB(t)
+	t.Setenv("ZEN_URL", zenURL)
+	registry = map[string]Tool{}
+	registryOrder = []string{}
+	registerMemoryTools()
+	registerZenTools()
+
+	bot, err := bots.CreateBot(bots.Bot{Name: "Helper", Color: "gray", Gateway: "fake", Model: "fake-model"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, token := range tokensByName {
+		if _, err := connections.CreateConnection(connections.Connection{BotID: bot.BotID, GroupID: "zen", Name: name, Secret: token}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return bot
+}
+
 func TestZenForbiddenBecomesToolError(t *testing.T) {
 	zen := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer bot-token" {
-			t.Errorf("expected the bot's token, got %q", r.Header.Get("Authorization"))
+			t.Errorf("expected the connection's token, got %q", r.Header.Get("Authorization"))
 		}
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, `{"code":"FORBIDDEN_SCOPE","message":"no write access"}`)
 	}))
 	defer zen.Close()
 
-	t.Setenv("ZEN_URL", zen.URL)
-	registry = map[string]Tool{}
-	registryOrder = []string{}
-	registerZenTools()
+	bot := setupZenBot(t, zen.URL, map[string]string{"Shesh": "bot-token"})
 
-	output := Run(context.Background(), bots.Bot{BotID: 1, ZenAPIToken: "bot-token"}, llm.ToolCall{Function: llm.FunctionCall{Name: "zen_create_note", Arguments: `{"title":"x","content":"y","tagIds":[1]}`}})
+	output := Run(context.Background(), bot, llm.ToolCall{Function: llm.FunctionCall{Name: "zen_create_note", Arguments: `{"title":"x","content":"y","tagIds":[1]}`}})
 	if !strings.HasPrefix(output, "Error:") || !strings.Contains(output, "FORBIDDEN_SCOPE") {
 		t.Fatalf("expected a tool error, got %q", output)
 	}
 }
 
+func TestZenPicksTheNamedConnection(t *testing.T) {
+	var usedToken string
+	zen := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		usedToken = r.Header.Get("Authorization")
+		fmt.Fprint(w, `[]`)
+	}))
+	defer zen.Close()
+
+	bot := setupZenBot(t, zen.URL, map[string]string{"Shesh": "shesh-token", "Ranjika": "ranjika-token"})
+
+	definitions, err := GetDefinitions(bot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, definition := range definitions {
+		if definition.Function.Name == "zen_list_tags" && !slices.Contains(definition.Function.Parameters.(map[string]any)["required"].([]string), "connection") {
+			t.Fatal("expected a required connection argument with two connections")
+		}
+	}
+
+	Run(context.Background(), bot, llm.ToolCall{Function: llm.FunctionCall{Name: "zen_list_tags", Arguments: `{"connection":"Ranjika"}`}})
+	if usedToken != "Bearer ranjika-token" {
+		t.Fatalf("expected Ranjika's token, got %q", usedToken)
+	}
+
+	output := Run(context.Background(), bot, llm.ToolCall{Function: llm.FunctionCall{Name: "zen_list_tags", Arguments: `{"connection":"Miransh"}`}})
+	if !strings.Contains(output, "use one of") {
+		t.Fatalf("expected an unknown connection error, got %q", output)
+	}
+}
+
 func TestToolGroupsFollowBotSettings(t *testing.T) {
-	t.Setenv("ZEN_URL", "http://zen.test")
-	registry = map[string]Tool{}
-	registryOrder = []string{}
-	registerMemoryTools()
-	registerZenTools()
+	bot := setupZenBot(t, "http://zen.test", map[string]string{})
 
 	countGroup := func(bot bots.Bot, group string) int {
+		definitions, err := GetDefinitions(bot)
+		if err != nil {
+			t.Fatal(err)
+		}
 		count := 0
-		for _, definition := range GetDefinitions(bot) {
+		for _, definition := range definitions {
 			if registry[definition.Function.Name].Group == group {
 				count++
 			}
@@ -137,17 +189,23 @@ func TestToolGroupsFollowBotSettings(t *testing.T) {
 		return count
 	}
 
-	if countGroup(bots.Bot{}, "memory") == 0 || countGroup(bots.Bot{}, "zen") != 0 {
-		t.Fatal("expected memory on by default and zen off without a token")
+	if countGroup(bot, "memory") == 0 || countGroup(bot, "zen") != 0 {
+		t.Fatal("expected memory on by default and zen off without a connection")
 	}
-	if countGroup(bots.Bot{ZenAPIToken: "token"}, "zen") == 0 {
-		t.Fatal("expected zen on once the bot has a token")
+
+	if _, err := connections.CreateConnection(connections.Connection{BotID: bot.BotID, GroupID: "zen", Name: "Shesh", Secret: "token"}); err != nil {
+		t.Fatal(err)
 	}
-	if countGroup(bots.Bot{DisabledToolGroups: []string{"memory"}}, "memory") != 0 {
+	if countGroup(bot, "zen") == 0 {
+		t.Fatal("expected zen on once the bot has a connection")
+	}
+
+	bot.DisabledToolGroups = []string{"memory"}
+	if countGroup(bot, "memory") != 0 {
 		t.Fatal("expected memory off once disabled")
 	}
 
-	output := Run(context.Background(), bots.Bot{DisabledToolGroups: []string{"memory"}}, llm.ToolCall{Function: llm.FunctionCall{Name: "save_memory", Arguments: `{"content":"x"}`}})
+	output := Run(context.Background(), bot, llm.ToolCall{Function: llm.FunctionCall{Name: "save_memory", Arguments: `{"content":"x"}`}})
 	if !strings.Contains(output, "turned off") {
 		t.Fatalf("expected a disabled tool to be refused, got %q", output)
 	}

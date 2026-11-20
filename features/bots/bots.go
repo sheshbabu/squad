@@ -17,7 +17,6 @@ import (
 
 type UpdateBotToolsRequest struct {
 	DisabledToolGroups []string `json:"disabledToolGroups"`
-	ZenAPIToken        string   `json:"zenApiToken"`
 }
 
 var colors = []string{"gray", "red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"}
@@ -88,7 +87,7 @@ func HandleUpdateBotTools(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updated, err := UpdateBotTools(botID, payload.DisabledToolGroups, strings.TrimSpace(payload.ZenAPIToken))
+	updated, err := UpdateBotTools(botID, payload.DisabledToolGroups)
 	if err != nil {
 		utils.SendErrorResponse(w, http.StatusInternalServerError, "BOT_UPDATE_FAILED", "Failed to update tools", err)
 		return

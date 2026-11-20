@@ -125,6 +125,22 @@ function updateBotTools(botId, payload) {
   return request('PUT', `/api/bots/${botId}/tools/`, payload);
 }
 
+function getConnections(botId) {
+  return request('GET', `/api/bots/${botId}/connections/`);
+}
+
+function createConnection(botId, payload) {
+  return request('POST', `/api/bots/${botId}/connections/`, payload);
+}
+
+function updateConnection(botId, connectionId, payload) {
+  return request('PUT', `/api/bots/${botId}/connections/${connectionId}/`, payload);
+}
+
+function deleteConnection(botId, connectionId) {
+  return request('DELETE', `/api/bots/${botId}/connections/${connectionId}/`);
+}
+
 function regenerateBotWebhook(botId) {
   return request('PUT', `/api/bots/${botId}/webhook/`);
 }
@@ -275,6 +291,10 @@ export default {
   updateBot,
   deleteBot,
   updateBotTools,
+  getConnections,
+  createConnection,
+  updateConnection,
+  deleteConnection,
   regenerateBotWebhook,
   deleteBotWebhook,
   getToolGroups,

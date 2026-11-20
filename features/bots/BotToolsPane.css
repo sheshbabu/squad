@@ -1,0 +1,35 @@
+.bot-tools-pane {
+    .bot-tools-pane-connections {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 0 0 var(--spacing-3) calc(var(--icon-md) + var(--spacing-4));
+
+        .bot-tools-pane-connection {
+            display: flex;
+            align-self: flex-start;
+            align-items: center;
+            padding: var(--spacing-1) var(--spacing-2);
+            margin-left: calc(-1 * var(--spacing-2));
+            border-radius: var(--radius-1);
+            font: var(--sm);
+            cursor: pointer;
+            transition: background-color var(--transition-normal);
+
+            &:hover {
+                background-color: var(--neutral-100);
+            }
+
+            .bot-tools-pane-connection-name {
+                min-width: 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            &.add {
+                color: var(--text-secondary);
+            }
+        }
+    }
+}

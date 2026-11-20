@@ -95,10 +95,15 @@ func runZenSearchNotes(ctx context.Context, bot bots.Bot, arguments string) (str
 		return "", err
 	}
 
+	connection, err := pickConnection(bot.BotID, "zen", arguments)
+	if err != nil {
+		return "", err
+	}
+
 	var response struct {
 		LexicalNotes []zenNote `json:"lexicalNotes"`
 	}
-	if err := callZen(ctx, bot.ZenAPIToken, http.MethodGet, "/api/v1/search/?query="+url.QueryEscape(args.Query), nil, &response); err != nil {
+	if err := callZen(ctx, connection.Secret, http.MethodGet, "/api/v1/search/?query="+url.QueryEscape(args.Query), nil, &response); err != nil {
 		return "", err
 	}
 
@@ -122,8 +127,13 @@ func runZenGetNote(ctx context.Context, bot bots.Bot, arguments string) (string,
 		return "", err
 	}
 
+	connection, err := pickConnection(bot.BotID, "zen", arguments)
+	if err != nil {
+		return "", err
+	}
+
 	var note zenNote
-	if err := callZen(ctx, bot.ZenAPIToken, http.MethodGet, "/api/v1/notes/"+strconv.Itoa(args.NoteID)+"/", nil, &note); err != nil {
+	if err := callZen(ctx, connection.Secret, http.MethodGet, "/api/v1/notes/"+strconv.Itoa(args.NoteID)+"/", nil, &note); err != nil {
 		return "", err
 	}
 
@@ -131,8 +141,13 @@ func runZenGetNote(ctx context.Context, bot bots.Bot, arguments string) (string,
 }
 
 func runZenListTags(ctx context.Context, bot bots.Bot, arguments string) (string, error) {
+	connection, err := pickConnection(bot.BotID, "zen", arguments)
+	if err != nil {
+		return "", err
+	}
+
 	var tags []zenTag
-	if err := callZen(ctx, bot.ZenAPIToken, http.MethodGet, "/api/v1/tags/", nil, &tags); err != nil {
+	if err := callZen(ctx, connection.Secret, http.MethodGet, "/api/v1/tags/", nil, &tags); err != nil {
 		return "", err
 	}
 
@@ -158,8 +173,13 @@ func runZenCreateNote(ctx context.Context, bot bots.Bot, arguments string) (stri
 		return "", err
 	}
 
+	connection, err := pickConnection(bot.BotID, "zen", arguments)
+	if err != nil {
+		return "", err
+	}
+
 	var note zenNote
-	if err := callZen(ctx, bot.ZenAPIToken, http.MethodPost, "/api/v1/notes/", buildZenNoteInput(args.Title, args.Content, args.TagIDs), &note); err != nil {
+	if err := callZen(ctx, connection.Secret, http.MethodPost, "/api/v1/notes/", buildZenNoteInput(args.Title, args.Content, args.TagIDs), &note); err != nil {
 		return "", err
 	}
 
@@ -177,8 +197,13 @@ func runZenUpdateNote(ctx context.Context, bot bots.Bot, arguments string) (stri
 		return "", err
 	}
 
+	connection, err := pickConnection(bot.BotID, "zen", arguments)
+	if err != nil {
+		return "", err
+	}
+
 	var note zenNote
-	if err := callZen(ctx, bot.ZenAPIToken, http.MethodPut, "/api/v1/notes/"+strconv.Itoa(args.NoteID)+"/", buildZenNoteInput(args.Title, args.Content, args.TagIDs), &note); err != nil {
+	if err := callZen(ctx, connection.Secret, http.MethodPut, "/api/v1/notes/"+strconv.Itoa(args.NoteID)+"/", buildZenNoteInput(args.Title, args.Content, args.TagIDs), &note); err != nil {
 		return "", err
 	}
 

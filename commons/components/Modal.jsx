@@ -2,23 +2,36 @@ import { CloseIcon } from './Icon.jsx';
 import './Modal.css';
 
 let modalRoot = null;
+let modalStack = [];
+let nextModalId = 1;
 
 // Modals render into their own root so any component can open one without threading state through the page.
 export function openModal(component) {
-  if (modalRoot === null) {
-    modalRoot = ReactDOM.createRoot(document.querySelector('.modal-root'));
-  }
-  modalRoot.render(component);
+  modalStack = [...modalStack, { id: nextModalId++, component }];
+  renderModals();
 }
 
 export function closeModal() {
-  if (modalRoot !== null) {
-    modalRoot.render(null);
-  }
+  modalStack = modalStack.slice(0, -1);
+  renderModals();
+}
+
+export function closeAllModals() {
+  modalStack = [];
+  renderModals();
 }
 
 export function isModalOpen() {
-  return document.querySelector('.modal-root').firstChild !== null;
+  return modalStack.length > 0;
+}
+
+function renderModals() {
+  if (modalRoot === null) {
+    modalRoot = ReactDOM.createRoot(document.querySelector('.modal-root'));
+  }
+
+  const modals = modalStack.map(modal => <React.Fragment key={modal.id}>{modal.component}</React.Fragment>);
+  modalRoot.render(<>{modals}</>);
 }
 
 export function ModalBackdrop({ children, onClose = closeModal, isCentered = true }) {
