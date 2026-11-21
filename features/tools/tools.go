@@ -48,6 +48,7 @@ func Init() {
 	registerExaTools()
 	registerRedditTools()
 	registerZenTools()
+	registerCalendarTools()
 }
 
 func register(group string, tool Tool) {

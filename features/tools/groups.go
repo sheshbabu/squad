@@ -31,6 +31,7 @@ var groups = []ToolGroup{
 	{GroupID: "web", Name: "Web", Description: "Read web pages, and search the web when EXA_API_KEY is set."},
 	{GroupID: "hackernews", Name: "Hacker News", Description: "Search stories and read comments."},
 	{GroupID: "reddit", Name: "Reddit", Description: "Search posts and read comments.", SetupHint: "Set the REDDIT_ environment variables to use Reddit."},
+	{GroupID: "calendar", Name: "Calendar", Description: "Read events from calendar links.", Connection: &ConnectionSpec{SecretLabel: "Calendar link", Hint: "Paste a calendar's private link. In Google Calendar it's the secret address in iCal format, under the calendar's settings. In iCloud, share the calendar as a public calendar and copy its link. Anyone with the link can read the calendar, so keep it private."}},
 	{GroupID: "zen", Name: "Zen", Description: "Search, read and write notes in Zen.", SetupHint: "Set ZEN_URL to use Zen.", Connection: &ConnectionSpec{SecretLabel: "API token", Hint: "Create a token in Zen under Settings, API Tokens. Its tag scopes decide which notes this connection can read and write."}},
 }
 

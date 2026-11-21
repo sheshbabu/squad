@@ -1,4 +1,4 @@
-import { DatabaseIcon, FileIcon, HistoryIcon, GlobeIcon, NewspaperIcon, NotepadIcon, ToolIcon } from './Icon.jsx';
+import { CalendarIcon, DatabaseIcon, FileIcon, HistoryIcon, GlobeIcon, NewspaperIcon, NotepadIcon, ToolIcon } from './Icon.jsx';
 
 const GROUP_ICONS = {
   memory: <DatabaseIcon />,
@@ -8,6 +8,7 @@ const GROUP_ICONS = {
   hackernews: <NewspaperIcon />,
   reddit: <NewspaperIcon />,
   zen: <NotepadIcon />,
+  calendar: <CalendarIcon />,
 };
 
 export default function ToolGroupIcon({ groupId }) {

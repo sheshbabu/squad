@@ -8,7 +8,7 @@
   - `gateways/` - Model and provider pickers
   - `threads/` - Threads, messages, attachments, the SSE endpoint and the chat UI
   - `agent/` - The agent loop, context building and thread titles
-  - `tools/` - Tools bots can call (memory, files, fetch, Exa, Hacker News, Reddit, Zen)
+  - `tools/` - Tools bots can call (memory, files, fetch, Exa, Hacker News, Reddit, Zen, Calendar)
   - `connections/` - Per-bot secrets that unlock tool groups, like Zen API tokens
   - `memories/`, `files/`, `schedules/`, `search/`
 - **Commons**: `sqlite/`, `utils/`, `session/`, `auth/`, `queue/` (durable job queue), `llm/` (gateways and stream client), `stream/` (SSE hub), plus frontend `components/`, `contexts/`, `http/ApiClient.js`

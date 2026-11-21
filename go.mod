@@ -9,3 +9,5 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.32
 	golang.org/x/crypto v0.37.0
 )
+
+require github.com/teambition/rrule-go v1.8.2

@@ -87,7 +87,7 @@ export default function BotToolsPane({ bot, onSaved }) {
         <div className="bot-tools-pane-connections">
           {connectionItems}
           <div className="bot-tools-pane-connection add" onClick={() => handleAddConnectionClick(group)}>
-            <span className="bot-tools-pane-connection-name">Add {group.name} connection</span>
+            <span className="bot-tools-pane-connection-name">Add connection</span>
           </div>
         </div>
       );

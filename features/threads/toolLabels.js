@@ -20,6 +20,7 @@ const TOOL_LABELS = {
   zen_list_tags: { group: "zen", running: () => "Checking Zen tags", done: "Checked Zen tags" },
   zen_create_note: { group: "zen", running: args => `Creating "${args.title}" in Zen`, done: "Created a Zen note", detail: args => args.title },
   zen_update_note: { group: "zen", running: () => "Updating a Zen note", done: "Updated a Zen note" },
+  calendar_events: { group: "calendar", running: args => `Checking the calendar from ${args.from} to ${args.to}`, done: "Checked the calendar", detail: args => `${args.from} to ${args.to}` },
 };
 
 export function getRunningLabel(toolCall) {
